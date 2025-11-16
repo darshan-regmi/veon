@@ -18,7 +18,7 @@ export default function VeonComingSoon() {
     const launchDate = new Date(2026, 0, 15, 0, 0, 0).getTime();
 
     const timer = setInterval(() => {
-      const now = new Date().getTime();
+      const now = Date.now();
       const distance = launchDate - now;
 
       if (distance < 0) {
@@ -42,7 +42,7 @@ export default function VeonComingSoon() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubscribe = async (e) => {
+  const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -73,8 +73,9 @@ export default function VeonComingSoon() {
       setEmail("");
     } catch (err) {
       console.error("Subscription error:", err);
-      console.error("Error code:", err.code);
-      console.error("Error message:", err.message);
+      if (err instanceof Error) {
+        console.error("Error message:", err.message);
+      }
       setError("Failed to subscribe. Please try again.");
     } finally {
       setLoading(false);
@@ -208,9 +209,11 @@ export default function VeonComingSoon() {
                   />
                 </svg>
               </div>
-              <h3 className="text-white font-semibold mb-1">You're all set!</h3>
+              <h3 className="text-white font-semibold mb-1">
+                You&apos;re all set!
+              </h3>
               <p className="text-sm text-gray-400">
-                We'll notify you when we launch
+                We&apos;ll notify you when we launch
               </p>
             </div>
           )}
