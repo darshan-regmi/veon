@@ -13,39 +13,65 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Veon - Premium Apps & eBooks | Handcrafted Digital Products",
-  description: "Discover premium Android APKs and expert eBooks crafted with passion. Veon offers carefully designed apps and guides to enhance your digital life.",
-  keywords: ["premium apps", "android apk", "ebooks", "digital products", "productivity apps", "expert guides"],
-  authors: [{ name: "Darshan Regmi" }],
-  creator: "Veon",
+  // Optimized title with template support
+  title: {
+    default: "Veon - Premium Apps & eBooks by Darshan Regmi",
+    template: "%s | Veon",
+  },
+
+  // SEO-optimized description (150-160 chars)
+  description:
+    "Download handcrafted Android APKs and expert eBooks by Darshan Regmi. Premium productivity apps, poetry collections, and digital guides built with passion in Nepal.",
+
+  // Keywords removed - deprecated by Google
+
+  authors: [{ name: "Darshan Regmi", url: "https://darshanregmi.com.np" }],
+  creator: "Darshan Regmi",
   publisher: "Veon",
-  metadataBase: new URL("https://veon.darshanregmi.com.np"), // Replace with your actual domain
+
+  metadataBase: new URL("https://veon.darshanregmi.com.np"),
+
+  // Canonical URL using Metadata API (not manual <head> tag)
+  alternates: {
+    canonical: "https://veon.darshanregmi.com.np",
+  },
+
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://veon.darshanregmi.com.np",
-    title: "Veon - Premium Apps & eBooks",
-    description: "Handcrafted digital products built with passion. Premium Android apps and expert guides.",
+    title: "Veon - Premium Apps & eBooks by Darshan Regmi",
+    description:
+      "Download handcrafted Android APKs and expert eBooks. Premium productivity apps and digital guides built with passion.",
     siteName: "Veon",
     images: [
       {
-        url: "/og-image.jpg", // Add this image to your /public folder
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Veon - Premium Digital Products",
+        alt: "Veon - Premium Android Apps and eBooks",
+        type: "image/jpeg",
       },
     ],
   },
+
   twitter: {
     card: "summary_large_image",
+    site: "@darshanregmi_np",
+    creator: "@darshanregmi_np",
     title: "Veon - Premium Apps & eBooks",
-    description: "Handcrafted digital products built with passion.",
-    images: ["/og-image.jpg"], // Same image as OG
-    creator: "@darshanregmi_np", // Replace with your Twitter handle
+    description:
+      "Download handcrafted Android APKs and expert eBooks built with passion.",
+    images: {
+      url: "/og-image.jpg",
+      alt: "Veon - Premium Android Apps and eBooks",
+    },
   },
+
   robots: {
     index: true,
     follow: true,
+    nocache: false,
     googleBot: {
       index: true,
       follow: true,
@@ -54,11 +80,21 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+
+  category: "technology",
+
   icons: {
-    icon: "/favicon.png",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
   },
+
   manifest: "/site.webmanifest",
 };
 
@@ -67,14 +103,33 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // JSON-LD structured data for SEO
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Veon",
+    url: "https://veon.darshanregmi.com.np",
+    author: {
+      "@type": "Person",
+      name: "Darshan Regmi",
+      url: "https://darshanregmi.com.np",
+    },
+    description: "Premium Android apps and eBooks crafted with passion",
+    publisher: {
+      "@type": "Organization",
+      name: "Veon",
+    },
+  };
+
   return (
     <html lang="en">
-      <head>
-        <link rel="canonical" href="https://veon.darshanregmi.con.np" />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         {children}
       </body>
     </html>

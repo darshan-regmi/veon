@@ -83,39 +83,44 @@ export default function VeonComingSoon() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Minimal gradient orbs */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-600/20 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-fuchsia-600/20 rounded-full blur-3xl"></div>
-
-      {/* Grid pattern overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:72px_72px]"></div>
+    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-neutral-50 via-stone-50 to-neutral-100"></div>
 
       <div className="max-w-5xl w-full relative z-10">
         {/* Logo */}
-        <div className="flex justify-center mb-16">
-          <div className="inline-flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-2xl">V</span>
-            </div>
-            <span className="text-white text-3xl font-bold tracking-tight">
-              veon
+        <div className="flex justify-center mb-12">
+          <div className="inline-flex items-center">
+            <span
+              className="text-neutral-900 text-4xl font-serif"
+              style={{ fontFamily: "Georgia, serif" }}
+            >
+              ve
             </span>
+            <div className="relative inline-flex items-center justify-center border-2 border-neutral-900 w-12 h-12 mx-0.5">
+              <span
+                className="text-neutral-900 text-4xl font-serif"
+                style={{ fontFamily: "Georgia, serif" }}
+              >
+                on
+              </span>
+            </div>
           </div>
         </div>
 
         {/* Hero */}
-        <div className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 rounded-full border border-white/10 mb-8">
-            <Sparkles className="w-4 h-4 text-violet-400" />
-            <span className="text-sm text-gray-400">Launching Soon</span>
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-neutral-900 rounded-full mb-6">
+            <Sparkles className="w-3.5 h-3.5 text-white" />
+            <span className="text-xs text-white font-medium">
+              Launching Soon
+            </span>
           </div>
 
-          <h1 className="text-6xl md:text-8xl font-bold text-white mb-6 tracking-tight">
+          <h1 className="text-5xl md:text-7xl font-medium text-neutral-900 mb-4">
             Coming Soon
           </h1>
 
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-neutral-600 max-w-xl mx-auto leading-relaxed">
             A curated collection of handcrafted apps and ebooks.
             <br />
             Built by one creator, for everyone.
@@ -123,7 +128,7 @@ export default function VeonComingSoon() {
         </div>
 
         {/* Countdown */}
-        <div className="flex justify-center gap-4 mb-20">
+        <div className="flex justify-center gap-3 mb-16">
           {[
             { value: timeLeft.days, label: "Days" },
             { value: timeLeft.hours, label: "Hours" },
@@ -131,12 +136,12 @@ export default function VeonComingSoon() {
             { value: timeLeft.seconds, label: "Secs" },
           ].map((item, idx) => (
             <div key={idx} className="flex flex-col items-center">
-              <div className="w-20 h-20 md:w-28 md:h-28 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 flex items-center justify-center mb-2">
-                <span className="text-3xl md:text-5xl font-bold text-white tabular-nums">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-xl border border-neutral-200 flex items-center justify-center mb-2 shadow-sm">
+                <span className="text-2xl md:text-3xl font-medium text-neutral-900 tabular-nums">
                   {String(item.value).padStart(2, "0")}
                 </span>
               </div>
-              <span className="text-xs text-gray-500 uppercase tracking-wider">
+              <span className="text-xs text-neutral-500 font-medium">
                 {item.label}
               </span>
             </div>
@@ -144,28 +149,28 @@ export default function VeonComingSoon() {
         </div>
 
         {/* Features */}
-        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-20">
-          <div className="group relative bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10 hover:border-violet-500/50 transition-all duration-300">
-            <div className="w-14 h-14 bg-gradient-to-br from-violet-500/20 to-violet-500/5 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <Smartphone className="w-7 h-7 text-violet-400" />
+        <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto mb-16">
+          <div className="bg-white rounded-2xl p-6 border border-neutral-200 shadow-sm">
+            <div className="w-10 h-10 bg-neutral-100 rounded-xl flex items-center justify-center mb-4">
+              <Smartphone className="w-5 h-5 text-neutral-700" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">
+            <h3 className="text-lg font-medium text-neutral-900 mb-1">
               Premium Apps
             </h3>
-            <p className="text-gray-400 leading-relaxed">
+            <p className="text-sm text-neutral-600 leading-relaxed">
               Thoughtfully designed Android applications to enhance your digital
               life
             </p>
           </div>
 
-          <div className="group relative bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10 hover:border-fuchsia-500/50 transition-all duration-300">
-            <div className="w-14 h-14 bg-gradient-to-br from-fuchsia-500/20 to-fuchsia-500/5 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <BookOpen className="w-7 h-7 text-fuchsia-400" />
+          <div className="bg-white rounded-2xl p-6 border border-neutral-200 shadow-sm">
+            <div className="w-10 h-10 bg-neutral-100 rounded-xl flex items-center justify-center mb-4">
+              <BookOpen className="w-5 h-5 text-neutral-700" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">
+            <h3 className="text-lg font-medium text-neutral-900 mb-1">
               Expert Guides
             </h3>
-            <p className="text-gray-400 leading-relaxed">
+            <p className="text-sm text-neutral-600 leading-relaxed">
               In-depth knowledge and practical resources to master new skills
             </p>
           </div>
@@ -176,27 +181,63 @@ export default function VeonComingSoon() {
           {!subscribed ? (
             <form onSubmit={handleSubscribe} className="relative">
               <input
+                required
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="w-full bg-white/5 backdrop-blur-sm text-white placeholder-gray-500 px-6 py-4 pr-32 rounded-2xl border border-white/10 focus:border-violet-500/50 focus:outline-none transition-all"
-                required
+                className="w-full rounded-full bg-white px-5 py-3 text-base text-gray-800 outline-none shadow-sm border border-gray-200 focus:ring-2 focus:ring-black focus:border-black pr-14"
               />
+
               <button
                 type="submit"
-                disabled={loading}
-                className="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-2.5 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white text-sm font-medium rounded-xl hover:shadow-lg hover:shadow-violet-500/25 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="absolute right-1 top-1/2 -translate-y-1/2 bg-black text-white rounded-full flex items-center justify-center px-5 py-2.5 hover:bg-gray-900 transition"
               >
-                {loading ? "Saving..." : "Notify Me"}
-                {!loading && <ArrowRight className="w-4 h-4" />}
+                {/* Desktop/Large screen: Notify me + Arrow */}
+                <span className="hidden md:flex items-center gap-x-2 text-sm">
+                  Notify me
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M5 12H19M19 12L12 5M19 12L12 19"
+                      stroke="white"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+
+                {/* Mobile: show only arrow */}
+                <span className="md:hidden">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M5 12H19M19 12L12 5M19 12L12 19"
+                      stroke="white"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
               </button>
             </form>
           ) : (
-            <div className="bg-emerald-500/10 backdrop-blur-sm border border-emerald-500/20 rounded-2xl p-6 text-center">
-              <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5 text-center">
+              <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <svg
-                  className="w-6 h-6 text-emerald-400"
+                  className="w-5 h-5 text-emerald-600"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -209,10 +250,10 @@ export default function VeonComingSoon() {
                   />
                 </svg>
               </div>
-              <h3 className="text-white font-semibold mb-1">
+              <h3 className="text-neutral-900 font-medium mb-1">
                 You&apos;re all set!
               </h3>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-neutral-600">
                 We&apos;ll notify you when we launch
               </p>
             </div>
@@ -221,10 +262,10 @@ export default function VeonComingSoon() {
           {!subscribed && (
             <>
               {error && (
-                <p className="text-center text-sm text-red-400 mt-4">{error}</p>
+                <p className="text-center text-sm text-red-600 mt-3">{error}</p>
               )}
               {!error && (
-                <p className="text-center text-sm text-gray-500 mt-4">
+                <p className="text-center text-sm text-neutral-500 mt-3">
                   Join the waitlist • No spam, ever
                 </p>
               )}
@@ -233,8 +274,8 @@ export default function VeonComingSoon() {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-20">
-          <p className="text-gray-600 text-sm">Crafted with care © 2024</p>
+        <div className="text-center mt-16">
+          <p className="text-neutral-400 text-sm">Crafted with care © 2024</p>
         </div>
       </div>
     </div>
