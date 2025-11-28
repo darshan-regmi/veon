@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     siteName: "Veon",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Veon - Premium Android Apps and eBooks",
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     description:
       "Download handcrafted Android APKs and expert eBooks built with passion.",
     images: {
-      url: "/og-image.jpg",
+      url: "/og-image.png",
       alt: "Veon - Premium Android Apps and eBooks",
     },
   },
