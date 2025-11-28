@@ -41,7 +41,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <a
-                  href="/apps"
+                  href="/products"
                   className="text-sm text-stone-600 hover:text-amber-900 transition"
                 >
                   Apps

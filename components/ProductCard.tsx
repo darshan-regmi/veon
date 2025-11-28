@@ -51,6 +51,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
         <p className="text-stone-600 text-sm mb-5 leading-relaxed line-clamp-2">
           {product.description}
+          <br />
         </p>
 
         <div className="flex items-center justify-between">
@@ -66,8 +67,7 @@ export default function ProductCard({ product }: { product: Product }) {
               )}
             </div>
           ) : (
-            <span className="text-2xl font-semibold text-amber-900">Free</span>
-          )}
+            <span className="text-2xl font-semibold text-stone-900"></span>)}
 
           <button
             onClick={handleDownload}

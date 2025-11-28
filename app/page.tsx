@@ -72,10 +72,10 @@ export default function HomePage() {
               Your Personal App Store
             </h1>
 
-            <p className="text-xl text-stone-600 max-w-2xl mx-auto leading-relaxed mb-2">
+            <p className="text-base text-stone-700 text-xl leading-relaxed md-2">
               Veon is a curated platform for apps and books I create.
             </p>
-            <p className="text-base text-stone-500 max-w-xl mx-auto">
+            <p className="text-stone-600 text-lg leading-relaxed">
               Download directly, no middleman—handcrafted software for real
               people.
             </p>
@@ -97,9 +97,12 @@ export default function HomePage() {
             <h2 className="text-2xl font-semibold text-stone-900 mb-3">
               Veil Poetry App
             </h2>
-            <p className="text-base text-stone-600 mb-6 max-w-lg mx-auto leading-relaxed">
+            <p className="text-base text-stone-600 text-lg mb-6  leading-relaxed">
               A minimal, offline-first poetry reading app with curated verses
+              <br />
               and dark mode. Now available for Android users.
+              <br />
+              <br />
             </p>
             <Link
               href="/products"
@@ -309,7 +312,7 @@ export default function HomePage() {
             <h2 className="text-3xl font-semibold text-stone-900 mb-4">
               What You'll Find on Veon
             </h2>
-            <p className="text-stone-600 max-w-2xl mx-auto mb-10">
+            <p className="text-stone-600 text-lg leading-relaxed">
               Apps, books, and creative projects—all made with care
             </p>
           </div>

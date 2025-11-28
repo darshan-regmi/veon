@@ -72,7 +72,7 @@ export default function ProductsPage() {
             <h1 className="text-4xl md:text-5xl font-medium text-stone-900 mb-3">
               Our Collection
             </h1>
-            <p className="text-lg text-stone-600 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-stone-600 mx-auto leading-relaxed">
               Handcrafted apps and ebooks, designed with care
             </p>
           </div>

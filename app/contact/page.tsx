@@ -20,7 +20,7 @@ export default function ContactPage() {
       <section className="bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-100 border-b border-stone-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
           <h1 className="text-4xl md:text-5xl font-medium mb-4">Contact Me</h1>
-          <p className="text-stone-600 text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="text-stone-600 text-lg mx-auto leading-relaxed">
             Whether it's an idea, a collaboration, or just a hello — I'd love to
             hear from you.
           </p>
