@@ -33,9 +33,9 @@ export default function ProductsPage() {
       id: 1,
       name: "Veil Poetry App",
       description:
-        "A minimal, offline-first poetry app with curated verses, smooth reading experience, and dark-mode optimized for late-night sessions.",
+        "A minimal, poetry app with curated verses, smooth reading experience, and dark-mode optimized for late-night sessions.",
       image:
-        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=600&fit=crop",
+        "https://i.pinimg.com/736x/ad/d1/b4/add1b412349bd131da205a71844039ae.jpg",
       price: 0,
       originalPrice: 0,
       badge: "New",
