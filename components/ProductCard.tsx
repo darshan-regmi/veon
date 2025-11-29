@@ -30,7 +30,7 @@ export default function ProductCard({ product }: { product: Product }) {
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        
+
         {/* Badge Overlay */}
         {product.badge && (
           <div className="absolute top-3 right-3">
@@ -67,7 +67,8 @@ export default function ProductCard({ product }: { product: Product }) {
               )}
             </div>
           ) : (
-            <span className="text-2xl font-semibold text-stone-900"></span>)}
+            <span className="text-2xl font-semibold text-stone-900"></span>
+          )}
 
           <button
             onClick={handleDownload}

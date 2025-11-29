@@ -41,7 +41,7 @@ export default function ProductsPage() {
       badge: "New",
       category: "apps",
       downloadLink:
-        "https://github.com/darshan-regmi/project-releases/releases/download/v1.0.1/veil-1.0.1.apk?raw=1",
+        "https://github.com/darshan-regmi/project-releases/releases/download/v1.0.0/veil.apk",
     },
   ];
 
