@@ -23,11 +23,11 @@ export const metadata: Metadata = {
   },
 
   description:
-    "Download premium Android APKs and expert eBooks by Darshan Regmi. Discover handcrafted productivity apps, poetry collections, and comprehensive digital guides from Nepal.",
+    "Download premium Android APKs and eBooks by Darshan Regmi. Discover handcrafted productivity apps, poetry collections from Nepal.",
 
   authors: [{ name: "Darshan Regmi", url: "https://darshanregmi.com.np" }],
   creator: "Darshan Regmi",
-  publisher: "Veon",
+  publisher: "Darshan Regmi",
 
   metadataBase: new URL("https://veon.darshanregmi.com.np"),
 
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     url: "https://veon.darshanregmi.com.np",
     title: "Veon - Download Premium Android Apps & eBooks | Darshan Regmi",
     description:
-      "Download premium Android APKs and expert eBooks by Darshan Regmi. Handcrafted productivity apps, poetry collections, and comprehensive digital guides from Nepal.",
+      "Download premium Android APKs and eBooks by Darshan Regmi. Handcrafted productivity apps, poetry collections from Nepal.",
     siteName: "Veon",
     images: [
       {
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     creator: "@darshanregmi_np",
     title: "Veon - Download Premium Android Apps & eBooks",
     description:
-      "Download premium Android APKs and expert eBooks by Darshan Regmi. Handcrafted productivity apps and digital guides from Nepal.",
+      "Download premium Android APKs and eBooks by Darshan Regmi. Handcrafted productivity apps from Nepal.",
     images: ["/og-image.png"],
   },
 
