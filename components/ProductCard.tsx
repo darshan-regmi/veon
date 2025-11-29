@@ -8,10 +8,14 @@ interface Product {
   description: string;
   image: string;
   price: number;
-  originalPrice: number | null;
+  originalPrice?: number | null; // ← add this
   badge: string | null;
   category: string;
   downloadLink: string;
+
+  rating?: number;
+  downloads?: number;
+  icon?: string;
 }
 
 export default function ProductCard({ product }: { product: Product }) {

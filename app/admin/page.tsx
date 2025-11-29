@@ -30,7 +30,6 @@ import {
   Download,
   TrendingUp,
   Eye,
-  Star,
 } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import Link from "next/link";
@@ -46,7 +45,6 @@ interface App {
   rating: number;
   downloads: number;
   icon: string;
-  screenshots?: string[];
   featured?: boolean;
   createdAt?: Date;
 }
@@ -71,17 +69,16 @@ export default function AdminPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch apps
         const appsRef = collection(db, "apps");
         const appsQuery = query(appsRef, orderBy("createdAt", "desc"));
         const appsSnap = await getDocs(appsQuery);
+
         const appsData = appsSnap.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
           createdAt: doc.data().createdAt?.toDate(),
         })) as App[];
 
-        // Fetch users count
         const usersRef = collection(db, "users");
         const usersSnap = await getDocs(usersRef);
 
@@ -90,17 +87,16 @@ export default function AdminPage() {
           0
         );
 
-        // Calculate revenue (assuming price * downloads for demo)
         const totalRevenue = appsData.reduce(
-          (sum, app) => sum + (app.price * app.downloads || 0),
+          (sum, app) => sum + app.price * (app.downloads || 0),
           0
         );
 
         setApps(appsData);
         setStats({
           totalApps: appsData.length,
-          totalDownloads: totalDownloads,
-          totalRevenue: totalRevenue,
+          totalDownloads,
+          totalRevenue,
           totalUsers: usersSnap.size,
         });
       } catch (error) {
@@ -117,10 +113,9 @@ export default function AdminPage() {
     if (confirm("Are you sure you want to delete this app?")) {
       try {
         await deleteDoc(doc(db, "apps", appId));
-        setApps(apps.filter((app) => app.id !== appId));
+        setApps((prev) => prev.filter((app) => app.id !== appId));
       } catch (error) {
         console.error("Error deleting app:", error);
-        alert("Failed to delete app");
       }
     }
   };
@@ -154,7 +149,8 @@ export default function AdminPage() {
 
   return (
     <ProtectedRoute requireAdmin>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             App Store Dashboard
@@ -164,19 +160,15 @@ export default function AdminPage() {
           </p>
         </div>
 
-        {/* Stats Cards */}
+        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {statCards.map((stat, index) => (
-            <Card key={index}>
+          {statCards.map((stat, i) => (
+            <Card key={i}>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">
-                      {stat.title}
-                    </p>
-                    <p className="text-3xl font-bold text-gray-900">
-                      {stat.value}
-                    </p>
+                    <p className="text-sm text-gray-600">{stat.title}</p>
+                    <p className="text-3xl font-bold">{stat.value}</p>
                   </div>
                   <stat.icon className={`h-12 w-12 ${stat.color}`} />
                 </div>
@@ -192,7 +184,8 @@ export default function AdminPage() {
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="apps" className="space-y-6">
+          {/* Apps Tab */}
+          <TabsContent value="apps">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
@@ -208,28 +201,31 @@ export default function AdminPage() {
                   </Button>
                 </Link>
               </CardHeader>
+
               <CardContent>
-                {loading ? (
+                {loading && (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {Array.from({ length: 6 }).map((_, i) => (
                       <div
-                        key={`skeleton-${i}`}
+                        key={i}
                         className="animate-pulse border rounded-lg p-4"
                       >
-                        <div className="w-16 h-16 bg-gray-200 rounded-xl mb-4"></div>
-                        <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                        <div className="h-3 bg-gray-200 rounded w-2/3 mb-2"></div>
-                        <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                        <div className="w-16 h-16 bg-gray-200 rounded-xl mb-4" />
+                        <div className="h-4 bg-gray-200 rounded mb-2" />
+                        <div className="h-3 bg-gray-200 rounded w-2/3 mb-2" />
+                        <div className="h-3 bg-gray-200 rounded w-1/3" />
                       </div>
                     ))}
                   </div>
-                ) : apps.length > 0 ? (
+                )}
+
+                {!loading && apps.length > 0 && (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {apps.map((app) => (
                       <div key={app.id} className="relative">
                         <ProductCard
                           product={{
-                            id: app.id,
+                            id: Number(app.id),
                             name: app.name,
                             description: app.description,
                             category: app.category,
@@ -237,8 +233,13 @@ export default function AdminPage() {
                             rating: app.rating,
                             downloads: app.downloads,
                             icon: app.icon,
+                            image: app.icon,
+                            badge: app.featured ? "Featured" : null,
+                            downloadLink: `/apps/${app.id}`,
                           }}
                         />
+
+                        {/* Action Buttons */}
                         <div className="absolute top-2 right-2 flex space-x-1">
                           <Link href={`/apps/${app.id}`}>
                             <Button
@@ -248,6 +249,7 @@ export default function AdminPage() {
                               <Eye className="w-4 h-4" />
                             </Button>
                           </Link>
+
                           <Link href={`/admin/apps/edit/${app.id}`}>
                             <Button
                               size="sm"
@@ -256,24 +258,27 @@ export default function AdminPage() {
                               <Edit className="w-4 h-4" />
                             </Button>
                           </Link>
+
                           <Button
                             size="sm"
-                            className="h-8 w-8 p-0 bg-white hover:bg-red-50 text-red-600 hover:text-red-800"
+                            className="h-8 w-8 p-0 bg-white hover:bg-red-50 text-red-600"
                             onClick={() => handleDeleteApp(app.id)}
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
+
                         {app.featured && (
-                          <Badge className="absolute top-2 left-2 bg-yellow-500 hover:bg-yellow-600">
-                            <Star className="w-3 h-3 mr-1" />
+                          <Badge className="absolute top-2 left-2 bg-yellow-500 text-white">
                             Featured
                           </Badge>
                         )}
                       </div>
                     ))}
                   </div>
-                ) : (
+                )}
+
+                {!loading && apps.length === 0 && (
                   <div className="text-center py-12">
                     <Smartphone className="w-12 h-12 mx-auto text-gray-400 mb-4" />
                     <p className="text-gray-600 mb-4">No apps yet</p>
@@ -289,7 +294,8 @@ export default function AdminPage() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="analytics" className="space-y-6">
+          {/* Analytics Tab */}
+          <TabsContent value="analytics">
             <Card>
               <CardHeader>
                 <CardTitle>Analytics Overview</CardTitle>
@@ -297,6 +303,7 @@ export default function AdminPage() {
                   Insights into your app store performance
                 </CardDescription>
               </CardHeader>
+
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -344,66 +351,11 @@ export default function AdminPage() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold mb-3">
-                      Category Distribution
-                    </h3>
-                    {apps.length > 0 ? (
-                      <div className="grid grid-cols-2 gap-3">
-                        {Object.entries(
-                          apps.reduce((acc, app) => {
-                            acc[app.category] = (acc[app.category] || 0) + 1;
-                            return acc;
-                          }, {} as Record<string, number>)
-                        ).map(([category, count]) => (
-                          <div
-                            key={category}
-                            className="p-3 bg-gray-50 rounded text-center"
-                          >
-                            <p className="text-2xl font-bold">{count}</p>
-                            <p className="text-xs text-gray-600 capitalize">
-                              {category}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-gray-500 py-4">
-                        No categories available yet
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="mt-6">
-                  <h3 className="font-semibold mb-3">Revenue by App</h3>
-                  {apps.length > 0 ? (
-                    <div className="space-y-2">
-                      {[...apps]
-                        .sort(
-                          (a, b) =>
-                            b.price * (b.downloads || 0) -
-                            a.price * (a.downloads || 0)
-                        )
-                        .slice(0, 5)
-                        .map((app) => (
-                          <div
-                            key={app.id}
-                            className="flex justify-between items-center p-3 bg-gray-50 rounded"
-                          >
-                            <span className="text-sm font-medium truncate">
-                              {app.name}
-                            </span>
-                            <span className="text-sm font-bold">
-                              ${(app.price * (app.downloads || 0)).toFixed(2)}
-                            </span>
-                          </div>
-                        ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-500 py-4">
-                      No revenue data available yet
+                    <h3 className="font-semibold mb-3">Coming Soon</h3>
+                    <p className="text-gray-500">
+                      More analytics features will be added later.
                     </p>
-                  )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
