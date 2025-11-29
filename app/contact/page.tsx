@@ -102,18 +102,18 @@ export default function ContactPage() {
           </p>
           <div className="space-y-3">
             <a
-              href="mailto:regmidarshan545@gmail.com"
+              href="mailto:darshanregmi.official@gmail.com"
               className="block text-amber-900 font-medium hover:text-amber-950 transition-colors"
             >
-              regmidarshan545@gmail.com
+              darshanregmi.official@gmail.com
             </a>
             <a
-              href="https://instagram.com/wordsbydarshan"
+              href="https://instagram.com/_darshan_regmi"
               target="_blank"
               rel="noopener noreferrer"
               className="block text-amber-900 font-medium hover:text-amber-950 transition-colors"
             >
-              Instagram — @wordsbydarshan
+              Instagram — @_darshan_regmi
             </a>
           </div>
         </div>

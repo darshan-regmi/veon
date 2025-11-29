@@ -103,20 +103,20 @@ export default function Footer() {
         {/* Bottom Section */}
         <div className="pt-8 border-t border-stone-200 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-stone-500">
-            © 2024 Veon. Crafted with care.
+            © {new Date().getFullYear()} Veon. Crafted with care.
           </p>
 
           {/* Social Links */}
           <div className="flex items-center gap-4">
             <a
-              href="mailto:hello@veon.com"
+              href="mailto:darshanregmi.official@gmail.com"
               className="w-9 h-9 rounded-full bg-stone-700 text-stone-50 flex items-center justify-center hover:bg-amber-900 transition"
               aria-label="Email"
             >
               <Mail className="w-4 h-4" />
             </a>
             <a
-              href="https://twitter.com"
+              href="https://x.com/darshanregmi_np"
               target="_blank"
               rel="noopener noreferrer"
               className="w-9 h-9 rounded-full bg-stone-700 text-stone-50 flex items-center justify-center hover:bg-amber-900 transition"
@@ -125,7 +125,7 @@ export default function Footer() {
               <Twitter className="w-4 h-4" />
             </a>
             <a
-              href="https://github.com"
+              href="https://github.com/darshan-regmi"
               target="_blank"
               rel="noopener noreferrer"
               className="w-9 h-9 rounded-full bg-stone-700 text-stone-50 flex items-center justify-center hover:bg-amber-900 transition"
@@ -134,7 +134,7 @@ export default function Footer() {
               <Github className="w-4 h-4" />
             </a>
             <a
-              href="https://linkedin.com"
+              href="https://linkedin.com/in/darshan-regmi"
               target="_blank"
               rel="noopener noreferrer"
               className="w-9 h-9 rounded-full bg-stone-700 text-stone-50 flex items-center justify-center hover:bg-amber-900 transition"

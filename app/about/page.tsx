@@ -70,12 +70,20 @@ export default function AboutPage() {
 
             <div className="pt-4 space-y-2">
               <a
-                href="https://instagram.com/wordsbydarshan"
+                href="https://instagram.com/bydarshanregmi"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-amber-900 font-medium hover:text-amber-950 transition-colors"
               >
-                Instagram — @wordsbydarshan
+                Instagram — @bydarshanregmi
+              </a>
+              <a
+                href="https://instagram.com/_darshan_regmi"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-amber-900 font-medium hover:text-amber-950 transition-colors"
+              >
+                Instagram — @_darshan_regmi
               </a>
               <a
                 href="https://github.com/darshan-regmi"
@@ -86,7 +94,7 @@ export default function AboutPage() {
                 GitHub — @darshan-regmi
               </a>
               <a
-                href="mailto:regmidarshan545@gmail.com"
+                href="mailto:darshanregmi.official@gmail.com"
                 className="block text-amber-900 font-medium hover:text-amber-950 transition-colors"
               >
                 Contact Me

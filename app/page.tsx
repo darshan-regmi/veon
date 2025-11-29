@@ -98,7 +98,7 @@ export default function HomePage() {
               Veil Poetry App
             </h2>
             <p className="text-base text-stone-600 text-lg mb-6  leading-relaxed">
-              A minimal, offline-first poetry reading app with curated verses
+              A minimal, poetry reading app with curated verses
               <br />
               and dark mode. Now available for Android users.
               <br />
