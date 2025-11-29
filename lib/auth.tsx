@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import {
   User,
   onAuthStateChanged,
@@ -13,9 +13,24 @@ import {
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
 
+/* -----------------------
+   Custom User Profile Type
+--------------------------*/
+interface UserProfile {
+  email: string;
+  displayName?: string;
+  photoURL?: string;
+  role: string;
+  createdAt: Date;
+}
+
+/* -----------------------
+   Auth Context Interface
+--------------------------*/
 interface AuthContextType {
   user: User | null;
   isAdmin: boolean;
+  userProfile: UserProfile | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
@@ -25,21 +40,46 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+/* -----------------------
+        Provider
+--------------------------*/
+export function AuthProvider({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   const [user, setUser] = useState<User | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  /* --------------------------------
+       Listen for Auth State Change
+  ----------------------------------*/
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (u) => {
+      setUser(u);
 
-      if (user) {
-        // Check if user is admin
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        const userData = userDoc.data();
-        setIsAdmin(userData?.role === "admin" || false);
+      if (u) {
+        const userDocRef = doc(db, "users", u.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        const data = userDoc.data();
+
+        if (data) {
+          const profile: UserProfile = {
+            email: data.email,
+            displayName: data.displayName,
+            photoURL: data.photoURL,
+            role: data.role,
+            createdAt: data.createdAt?.toDate
+              ? data.createdAt.toDate()
+              : data.createdAt,
+          };
+
+          setUserProfile(profile);
+          setIsAdmin(data.role === "admin");
+        }
       } else {
+        setUserProfile(null);
         setIsAdmin(false);
       }
 
@@ -48,6 +88,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return unsubscribe;
   }, []);
+
+  /* --------------------------------
+           Auth Functions
+  ----------------------------------*/
 
   const signIn = async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email, password);
@@ -60,10 +104,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       password
     );
 
-    // Create user document in Firestore
     await setDoc(doc(db, "users", userCredential.user.uid), {
       email: userCredential.user.email,
-      role: "user", // default role
+      role: "user",
       createdAt: new Date(),
     });
   };
@@ -72,16 +115,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const provider = new GoogleAuthProvider();
     const userCredential = await signInWithPopup(auth, provider);
 
-    // Check if user document exists, if not create it
-    const userDocRef = doc(db, "users", userCredential.user.uid);
-    const userDoc = await getDoc(userDocRef);
+    const ref = doc(db, "users", userCredential.user.uid);
+    const snap = await getDoc(ref);
 
-    if (!userDoc.exists()) {
-      await setDoc(userDocRef, {
+    if (!snap.exists()) {
+      await setDoc(ref, {
         email: userCredential.user.email,
         displayName: userCredential.user.displayName,
         photoURL: userCredential.user.photoURL,
-        role: "user", // default role
+        role: "user",
         createdAt: new Date(),
       });
     }
@@ -91,19 +133,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await firebaseSignOut(auth);
   };
 
-  const value = {
-    user,
-    isAdmin,
-    loading,
-    signIn,
-    signUp,
-    signInWithGoogle,
-    signOut,
-  };
+  /* --------------------------------
+           Memoized Context Value
+  ----------------------------------*/
+  const value = useMemo(
+    () => ({
+      user,
+      isAdmin,
+      userProfile,
+      loading,
+      signIn,
+      signUp,
+      signInWithGoogle,
+      signOut,
+    }),
+    [user, isAdmin, userProfile, loading]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+/* -----------------------
+         Hook
+--------------------------*/
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
