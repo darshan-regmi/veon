@@ -47,7 +47,7 @@ cd veon
 
 2. **Install dependencies**
 ```bash
-npm install
+pnpm install
 ```
 
 3. **Setup Firebase**
@@ -70,7 +70,7 @@ NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 
 5. **Run development server**
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Visit `http://localhost:3000` to see Veon in action!
@@ -319,16 +319,16 @@ await incrementDownloads('app-id');
 
 ```bash
 # Run with Turbopack for faster builds
-npm run dev
+pnpm run dev
 
 # Build for production
-npm run build
+pnpm run build
 
 # Start production server
-npm start
+pnpm start
 
 # Run linter
-npm run lint
+pnpm run lint
 ```
 
 ## 📜 License
