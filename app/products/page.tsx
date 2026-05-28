@@ -62,48 +62,77 @@ export default function ProductsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div style={{ backgroundColor: "#ffffff", color: "#1d1d1f" }}>
       <Navbar />
 
-      {/* Header Section */}
-      <div className="bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-100 border-b border-stone-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl md:text-5xl font-medium text-stone-900 mb-3">
-              Our Collection
-            </h1>
-            <p className="text-lg text-stone-600 mx-auto leading-relaxed">
-              Handcrafted apps and ebooks, designed with care
-            </p>
-          </div>
+      {/* Header tile */}
+      <section style={{ backgroundColor: "#f5f5f7", paddingTop: 80, paddingBottom: 80 }}>
+        <div className="max-w-[980px] mx-auto px-4 sm:px-6 text-center">
+          <h1
+            className="text-[#1d1d1f] mb-4"
+            style={{
+              fontFamily: '"SF Pro Display", system-ui, -apple-system, sans-serif',
+              fontSize: "clamp(34px, 5vw, 56px)",
+              fontWeight: 600,
+              lineHeight: 1.07,
+              letterSpacing: "-0.28px",
+            }}
+          >
+            Our Collection
+          </h1>
+          <p
+            className="text-[#7a7a7a] max-w-xl mx-auto"
+            style={{ fontSize: 21, lineHeight: 1.19, letterSpacing: "0.196px" }}
+          >
+            Handcrafted apps and ebooks, designed with care
+          </p>
 
-          {/* Search Bar */}
-          <div className="relative max-w-xl mx-auto">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-stone-400 w-5 h-5" />
+          {/* Search */}
+          <div className="relative max-w-xl mx-auto mt-10">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7a7a7a] w-4 h-4" />
             <input
               type="text"
-              placeholder="Search products..."
+              placeholder="Search products…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-white border border-stone-200 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-900 focus:border-amber-900 shadow-sm transition-all"
+              className="focus:outline-none focus:border-[#0066cc] placeholder:text-[#7a7a7a] transition-colors"
+              style={{
+                width: "100%",
+                paddingLeft: 44,
+                paddingRight: 20,
+                height: 44,
+                borderRadius: 9999,
+                border: "1px solid #e0e0e0",
+                backgroundColor: "#ffffff",
+                color: "#1d1d1f",
+                fontSize: 17,
+                letterSpacing: "-0.374px",
+              }}
             />
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-[980px] mx-auto px-4 sm:px-6 py-12">
         {/* Categories */}
-        <div className="flex items-center gap-3 mb-10 overflow-x-auto pb-2 scrollbar-hide">
-          <Filter className="text-stone-400 w-5 h-5 flex-shrink-0" />
+        <div className="flex items-center gap-2 mb-10 overflow-x-auto pb-2">
+          <Filter className="text-[#7a7a7a] w-4 h-4 flex-shrink-0" />
           {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
-              className={`px-5 py-2.5 rounded-full whitespace-nowrap transition-all text-sm font-medium ${
-                selectedCategory === category.id
-                  ? "bg-amber-900 text-amber-50 shadow-md"
-                  : "bg-white text-stone-600 hover:bg-stone-100 hover:text-stone-900 border border-stone-200"
-              }`}
+              className="whitespace-nowrap transition-all active:scale-95"
+              style={{
+                padding: "6px 16px",
+                borderRadius: 9999,
+                fontSize: 14,
+                fontWeight: 500,
+                letterSpacing: "-0.224px",
+                border: "1px solid",
+                borderColor: selectedCategory === category.id ? "#0066cc" : "#e0e0e0",
+                backgroundColor: selectedCategory === category.id ? "#0066cc" : "#ffffff",
+                color: selectedCategory === category.id ? "#ffffff" : "#1d1d1f",
+              }}
             >
               {category.name}
             </button>
@@ -119,20 +148,25 @@ export default function ProductsPage() {
           </div>
         ) : (
           <div className="text-center py-16">
-            <div className="w-20 h-20 bg-stone-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="w-10 h-10 text-stone-400" />
+            <div
+              className="w-20 h-20 flex items-center justify-center mx-auto mb-4"
+              style={{ borderRadius: 9999, backgroundColor: "#f5f5f7" }}
+            >
+              <Search className="w-8 h-8 text-[#7a7a7a]" />
             </div>
-            <p className="text-stone-500 text-lg font-medium mb-2">
+            <p
+              className="text-[#1d1d1f] font-semibold mb-2"
+              style={{ fontSize: 17 }}
+            >
               No products found
             </p>
-            <p className="text-stone-400 text-sm">
+            <p className="text-[#7a7a7a]" style={{ fontSize: 14 }}>
               Try adjusting your search or filters
             </p>
           </div>
         )}
       </div>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

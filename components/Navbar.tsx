@@ -1,111 +1,82 @@
+"use client";
+
 import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 
 export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const linkClass =
+    "text-[12px] leading-none tracking-[-0.12px] text-white/80 hover:text-white transition-colors";
 
   return (
-    <nav className="bg-white border-b border-stone-200 sticky top-0 z-50 backdrop-blur-sm bg-white/95">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center group">
-            <span
-              className="text-stone-900 text-2xl font-serif tracking-wide transition-colors"
-              style={{ fontFamily: "Georgia, serif", letterSpacing: "0.02em" }}
-            >
-              ve
-            </span>
-            <div className="relative inline-flex items-center justify-center border-2 border-stone-900 w-8 h-8 mx-0.5 transition-transform group-hover:scale-105">
-              <span
-                className="text-stone-900 text-2xl font-serif"
-                style={{ fontFamily: "Georgia, serif" }}
-              >
-                on
-              </span>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            <Link
-              href="/"
-              className="text-sm font-medium text-stone-600 hover:text-amber-900 transition"
-            >
-              Home
-            </Link>
-            <Link
-              href="/products"
-              className="text-sm font-medium text-stone-600 hover:text-amber-900 transition"
-            >
-              Products
-            </Link>
-            <Link
-              href="/about"
-              className="text-sm font-medium text-stone-600 hover:text-amber-900 transition"
-            >
-              About
-            </Link>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-stone-100 transition"
-            aria-label="Toggle menu"
+    <nav
+      className="sticky top-0 z-50"
+      style={{ backgroundColor: "#000000", height: 44 }}
+    >
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+        {/* Logo */}
+        <Link href="/" className="flex items-center group shrink-0">
+          <span
+            className="text-white text-lg font-semibold tracking-tight"
+            style={{ fontFamily: '"SF Pro Display", system-ui, -apple-system, sans-serif' }}
           >
-            {isMenuOpen ? (
-              <X className="w-5 h-5 text-stone-900" />
-            ) : (
-              <Menu className="w-5 h-5 text-stone-900" />
-            )}
-          </button>
+            ve
+          </span>
+          <span
+            className="text-white text-lg font-semibold tracking-tight border border-white/70 px-1 mx-0.5 group-hover:border-white transition-colors"
+            style={{ fontFamily: '"SF Pro Display", system-ui, -apple-system, sans-serif' }}
+          >
+            on
+          </span>
+        </Link>
+
+        {/* Desktop nav */}
+        <div className="hidden md:flex items-center gap-7">
+          <Link href="/" className={linkClass}>Home</Link>
+          <Link href="/apps" className={linkClass}>Apps</Link>
+          <Link href="/books" className={linkClass}>Books</Link>
+          <Link href="/about" className={linkClass}>About</Link>
+          <Link href="/contact" className={linkClass}>Contact</Link>
         </div>
 
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-stone-200 animate-fade-in">
-            <div className="flex flex-col gap-4">
-              <Link
-                href="/"
-                onClick={() => setIsMenuOpen(false)}
-                className="text-sm font-medium text-stone-600 hover:text-amber-900 transition"
-              >
-                Home
-              </Link>
-              <Link
-                href="/products"
-                onClick={() => setIsMenuOpen(false)}
-                className="text-sm font-medium text-stone-600 hover:text-amber-900 transition"
-              >
-                Products
-              </Link>
-              <Link
-                href="/apps"
-                onClick={() => setIsMenuOpen(false)}
-                className="text-sm font-medium text-stone-600 hover:text-amber-900 transition"
-              >
-                Apps
-              </Link>
-              <Link
-                href="/ebooks"
-                onClick={() => setIsMenuOpen(false)}
-                className="text-sm font-medium text-stone-600 hover:text-amber-900 transition"
-              >
-                Ebooks
-              </Link>
-              <Link
-                href="/about"
-                onClick={() => setIsMenuOpen(false)}
-                className="text-sm font-medium text-stone-600 hover:text-amber-900 transition"
-              >
-                About
-              </Link>
-            </div>
-          </div>
-        )}
+        {/* Mobile toggle */}
+        <button
+          onClick={() => setOpen(!open)}
+          className="md:hidden p-1.5 text-white/80 hover:text-white transition-colors"
+          aria-label="Toggle menu"
+        >
+          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </div>
+
+      {/* Mobile menu */}
+      {open && (
+        <div
+          className="md:hidden border-t border-white/10"
+          style={{ backgroundColor: "#000000" }}
+        >
+          <div className="max-w-[1440px] mx-auto px-4 py-4 flex flex-col gap-4">
+            {[
+              { href: "/", label: "Home" },
+              { href: "/apps", label: "Apps" },
+              { href: "/books", label: "Books" },
+              { href: "/about", label: "About" },
+              { href: "/contact", label: "Contact" },
+            ].map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setOpen(false)}
+                className={linkClass}
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

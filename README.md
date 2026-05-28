@@ -1,349 +1,337 @@
 # Veon — Personal App Store
 
-![Veon](https://img.shields.io/badge/Next.js-15+-black?style=flat-square&logo=next.js)
-![Firebase](https://img.shields.io/badge/Firebase-9+-yellow?style=flat-square&logo=firebase)
-![Cloudflare](https://img.shields.io/badge/Cloudflare-Pages-orange?style=flat-square&logo=cloudflare)
+![Veon](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)
+![Firebase](https://img.shields.io/badge/Firebase-Firestore%20%2B%20Auth-yellow?style=flat-square&logo=firebase)
+![Supabase](https://img.shields.io/badge/Supabase-Storage-3ECF8E?style=flat-square&logo=supabase)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
-![Status](https://img.shields.io/badge/Status-In%20Development-blue?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square)
 
-**Veon** is a personal web app store designed to showcase and distribute your Android apps. Think of it as a mini-Play Store, but curated, clean, and personalized to your brand.
+**Veon** is a personal web app store for showcasing and distributing Android apps. Think of it as a mini Play Store — curated, clean, and fully yours.
 
-Built with **Next.js 15**, **Firebase**, and **Cloudflare Pages**, Veon gives you full control over branding, download links, and app updates while maintaining a professional, minimal aesthetic.
+Built with **Next.js 16**, **Firebase**, and **Supabase Storage**, Veon gives you full control over branding, download links, version history, and app updates.
 
-## ✨ Features
+---
 
-### Core Features
-- **🏠 Homepage / Hero Section**: Clean introduction with featured app showcase
-- **📱 App Catalog**: Browse all hosted apps with descriptions, versions, and download buttons
-- **📊 Download Management**: Track downloads and manage app versions
-- **🖼️ Media Gallery**: Screenshot carousel for each app
-- **⚡ Admin Panel**: Firebase Authentication + Firestore integration for easy app management
-- **🔗 GitHub Integration**: Auto-fetch latest releases from GitHub Releases
-- **📈 Version Tracking**: Automatic changelog and version history management
-- **🎨 Custom Branding**: Fully personalized design reflecting your creative identity
+## Features
 
-### Tech Stack Highlights
-- **Frontend**: Next.js 15 (App Router) + Tailwind CSS
-- **Backend**: Firebase Firestore + Firebase Authentication
-- **Hosting**: Cloudflare Pages (unlimited bandwidth, free SSL)
-- **APK Storage**: GitHub Releases (unlimited storage)
-- **Edge Functions**: Cloudflare Workers (optional redirects & analytics)
+- **App Catalog** — Browse all apps with search and category filtering
+- **App Detail Pages** — Screenshots carousel, features list, version changelog
+- **Download Tracking** — Every download is counted in Firestore
+- **Admin Panel** — Add, edit, and delete apps behind a protected route
+- **GitHub Integration** — Sync version, release date, download URL, and changelog from GitHub Releases (supports private repos via PAT)
+- **Image Uploads** — App icons and screenshots uploaded to Supabase Storage
+- **APK Hosting** — APK files hosted on GitHub Releases (free, unlimited)
+- **Auth** — Firebase Authentication (Email/Password + Google Sign-In)
+- **Role-based Access** — Admin role stored in Firestore `users` collection
+- **SEO** — `sitemap.ts`, `robots.ts`, Open Graph tags, JSON-LD structured data
 
-## 🚀 Quick Start
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| Styling | Tailwind CSS v4 + shadcn/ui |
+| Database | Firebase Firestore |
+| Authentication | Firebase Auth |
+| Image Storage | Supabase Storage |
+| APK Storage | GitHub Releases |
+| Hosting | Cloudflare Pages |
+
+---
+
+## Project Structure
+
+```
+veon/
+├── app/
+│   ├── layout.tsx                    # Root layout with AuthProvider + SEO metadata
+│   ├── page.tsx                      # Homepage with featured apps from Firestore
+│   ├── apps/
+│   │   ├── page.tsx                  # App catalog (search + category filter)
+│   │   └── [slug]/
+│   │       └── page.tsx              # App detail (screenshots, features, changelog)
+│   ├── admin/
+│   │   ├── page.tsx                  # Admin dashboard (stats + app management)
+│   │   └── apps/
+│   │       ├── add/page.tsx          # Add new app form
+│   │       └── edit/[id]/page.tsx    # Edit existing app form
+│   ├── api/
+│   │   └── github/
+│   │       └── release/route.ts      # Server-side GitHub release proxy (uses PAT)
+│   ├── auth/
+│   │   ├── login/page.tsx
+│   │   └── register/page.tsx
+│   ├── about/page.tsx
+│   ├── contact/page.tsx
+│   ├── privacy/page.tsx
+│   ├── terms/page.tsx
+│   ├── robots.ts
+│   └── sitemap.ts
+│
+├── components/
+│   ├── AppCard.tsx                   # App listing card
+│   ├── DownloadButton.tsx            # Tracks downloads + opens APK URL
+│   ├── Screenshots.tsx               # Portrait screenshot carousel
+│   ├── Navbar.tsx
+│   ├── Footer.tsx
+│   ├── ProtectedRoute.tsx            # Wraps admin pages (requireAdmin prop)
+│   └── ui/                           # shadcn/ui primitives
+│
+├── lib/
+│   ├── types.ts                      # App interface + AppInput type
+│   ├── firebase.ts                   # Firebase client initialization
+│   ├── firebase-admin.ts             # Firebase Admin SDK (server-side)
+│   ├── firestore.ts                  # getAllApps, getFeaturedApps, getAppBySlug, etc.
+│   ├── auth.tsx                      # AuthContext + useAuth hook
+│   ├── github.ts                     # getLatestRelease() — calls /api/github/release
+│   ├── supabase.ts                   # Supabase client
+│   ├── storage.ts                    # uploadImage() via Supabase Storage
+│   └── utils.ts
+│
+├── hooks/
+│   └── use-toast.ts
+│
+├── public/
+│   ├── manifest.json
+│   ├── og-image.png
+│   ├── logo.png
+│   └── favicon.png
+│
+├── .env.local                        # Environment variables (never commit this)
+├── next.config.ts
+├── postcss.config.mjs
+└── tsconfig.json
+```
+
+---
+
+## Quick Start
 
 ### Prerequisites
-- Node.js 20+ and npm/yarn
-- Firebase account
+
+- Node.js 20+
+- npm
+- Firebase project
+- Supabase project
 - GitHub account
-- Git installed
 
-### Installation
+### 1. Clone the repository
 
-1. **Clone the repository**
 ```bash
 git clone https://github.com/darshan-regmi/veon.git
 cd veon
 ```
 
-2. **Install dependencies**
+### 2. Install dependencies
+
 ```bash
-pnpm install
+npm install
 ```
 
-3. **Setup Firebase**
-   - Go to [Firebase Console](https://console.firebase.google.com)
-   - Create a new project: `veon-app-store`
-   - Enable Authentication (Email/Password + Google Sign-In)
-   - Create a Firestore Database (Test mode)
-   - Copy your Firebase config
+### 3. Configure environment variables
 
-4. **Configure environment variables**
-```bash
-# Create .env.local
-NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-```
+Create a `.env.local` file in the project root (see [Environment Variables](#environment-variables) section below).
 
-5. **Run development server**
-```bash
-pnpm run dev
-```
+### 4. Set up Firebase
 
-Visit `http://localhost:3000` to see Veon in action!
+1. Go to [Firebase Console](https://console.firebase.google.com) → create a project
+2. **Authentication** → Sign-in method → enable **Email/Password** and **Google**
+3. **Firestore** → Create database → start in production mode
+4. **Project Settings** → Your apps → copy the Firebase config into `.env.local`
 
-## 📁 Project Structure
-
-```
-veon/
-├── app/
-│   ├── layout.tsx              # Root layout with AuthProvider
-│   ├── page.tsx                # Homepage with featured apps
-│   ├── apps/
-│   │   ├── page.tsx            # App catalog
-│   │   └── [slug]/
-│   │       └── page.tsx        # Individual app detail page
-│   ├── admin/
-│   │   └── page.tsx            # Admin panel (Firebase Auth required)
-│   ├── api/
-│   │   └── download/           # Download tracking endpoint
-│   ├── globals.css             # Tailwind styles
-│   └── favicon.ico
-│
-├── components/
-│   ├── AppCard.tsx             # App listing card component
-│   ├── DownloadButton.tsx       # Download with tracking
-│   ├── Hero.tsx                # Homepage hero section
-│   └── Screenshots.tsx         # App screenshot carousel
-│
-├── context/
-│   └── AuthContext.tsx         # Global auth state
-│
-├── hooks/
-│   └── useAuth.ts              # Firebase auth hook
-│
-├── lib/
-│   ├── firebase.ts             # Firebase initialization
-│   ├── firestore.ts            # Firestore helpers
-│   ├── github.ts               # GitHub API integration
-│   └── types.ts                # TypeScript interfaces
-│
-├── public/                      # Static assets
-├── .env.local                  # Environment variables (git ignored)
-├── next.config.ts              # Next.js configuration
-├── tailwind.config.ts          # Tailwind configuration
-├── tsconfig.json               # TypeScript configuration
-└── README.md                   # This file
-```
-
-## 🔐 Firebase Setup
-
-### Firestore Collections
-
-**Collection: `apps`**
-```typescript
-{
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  icon: string;
-  features: string[];
-  version: string;
-  releaseDate: string;
-  downloadUrl: string;
-  screenshots: string[];
-  category: string;
-  downloads: number;
-  changelog: Record<string, string>;
-  featured: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
-```
-
-### Firestore Security Rules
+Set Firestore security rules (**Firestore → Rules**):
 
 ```javascript
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Public read access
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if isSignedIn() && request.auth.uid == userId &&
+                       request.resource.data.role == resource.data.role;
+      allow delete: if isAdmin();
+    }
+
     match /apps/{appId} {
       allow read: if true;
-      allow write: if request.auth != null && 
-                      request.auth.token.email == 'your-email@gmail.com';
+      allow create, update, delete: if isAdmin();
     }
   }
 }
 ```
 
-## 🤖 Admin Panel
+### 5. Set up Supabase Storage
 
-Access the admin panel at `/admin` to:
-- Add new apps
-- Update app information
-- Manage screenshots and features
-- Track downloads
+1. Go to [supabase.com](https://supabase.com) → create a project
+2. **Storage** → New bucket → name: `app-images` → enable **Public bucket**
+3. **Storage** → Policies → add these policies for `app-images`:
 
-**Note**: Only authenticated users can access the admin panel. Configure authorized emails in Firestore security rules.
-
-## 📦 GitHub Releases Integration
-
-Veon automatically fetches the latest release and updates your app catalog. No manual configuration needed!
-
-### Setup GitHub Actions for Auto-Release
-
-Create `.github/workflows/release.yml` in your Android app repository:
-
-```yaml
-name: Build and Release APK
-
-on:
-  push:
-    tags:
-      - 'v*'
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-      - name: Build Release APK
-        run: ./gradlew assembleRelease
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: app/build/outputs/apk/release/*.apk
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```sql
+CREATE POLICY "Public read"     ON storage.objects FOR SELECT USING (bucket_id = 'app-images');
+CREATE POLICY "Allow uploads"   ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'app-images');
+CREATE POLICY "Allow updates"   ON storage.objects FOR UPDATE USING (bucket_id = 'app-images');
+CREATE POLICY "Allow deletes"   ON storage.objects FOR DELETE USING (bucket_id = 'app-images');
 ```
 
-## 🌐 Deployment
+4. **Project Settings** → API → copy URL and anon key into `.env.local`
 
-### Deploy to Cloudflare Pages
-
-1. **Push code to GitHub**
-```bash
-git add .
-git commit -m "feat: add new features"
-git push origin dev
-```
-
-2. **Create PR and merge to main** (triggers auto-deployment)
-
-3. **Setup Cloudflare Pages**
-   - Go to [Cloudflare Pages](https://pages.cloudflare.com)
-   - Connect your GitHub repository
-   - Build settings:
-     - Framework: **Next.js (Static HTML Export)**
-     - Build command: `npx next build`
-     - Build output: `out`
-
-4. **Access your site**
-   - Automatic URL: `veon.pages.dev`
-   - Optional: Add custom domain (e.g., `veon.app`, `veon.tech`)
-
-## 🔄 Git Workflow
-
-### Branch Strategy
-
-```
-main (production) ← tested & stable
-  ↑
- dev (development) ← where you work
-  ↑
-feature branches ← individual features
-```
-
-### Common Commands
+### 6. Run the development server
 
 ```bash
-# Switch to dev branch
-git checkout dev
-
-# Create a feature branch
-git checkout -b feature/firestore-setup
-
-# Commit changes
-git add .
-git commit -m "feat: add Firestore integration"
-
-# Push to GitHub
-git push origin feature/firestore-setup
-
-# Merge to dev
-git checkout dev
-git merge feature/firestore-setup
-
-# When ready to deploy, merge dev to main
-git checkout main
-git merge dev
-git push origin main  # Auto-deploys to Cloudflare Pages!
+npm run dev
 ```
 
-## 📥 Firestore Helper Functions
-
-### Get All Apps
-```typescript
-import { getAllApps } from '@/lib/firestore';
-const apps = await getAllApps();
-```
-
-### Get Featured Apps
-```typescript
-import { getFeaturedApps } from '@/lib/firestore';
-const featured = await getFeaturedApps();
-```
-
-### Get App by Slug
-```typescript
-import { getAppBySlug } from '@/lib/firestore';
-const app = await getAppBySlug('poem-reader');
-```
-
-### Track Downloads
-```typescript
-import { incrementDownloads } from '@/lib/firestore';
-await incrementDownloads('app-id');
-```
-
-## 🎨 Customization
-
-### Update Branding
-- **Header/Navigation**: Change logo, title, and social links
-- **Colors & Styles**: Customize Tailwind color scheme in `globals.css`
-- **About Section**: Add your bio and personal touch
-
-### Your Social Links
-- Instagram: [@_darshan_regmi](https://instagram.com/_darshan_regmi)
-- Instagram: [@bydarshanregmi](https://instagram.com/bydarshanregmi)
-
-## 🔂 Performance
-
-- **Static Generation**: Most pages pre-rendered for speed
-- **Incremental Static Regeneration (ISR)**: Auto-update without rebuilds
-- **Global CDN**: Cloudflare Pages worldwide distribution
-- **Edge Caching**: Automatic cache optimization
-
-## 💴 Development Commands
-
-```bash
-# Run with Turbopack for faster builds
-pnpm run dev
-
-# Build for production
-pnpm run build
-
-# Start production server
-pnpm start
-
-# Run linter
-pnpm run lint
-```
-
-## 📜 License
-
-This project is licensed under the MIT License. See [LICENSE](./LICENSE) file for details.
-
-## 😋 Built by
-
-**Darshan Regmi** — Full-stack Developer & Poetry Enthusiast
-
-- 📸 Instagram: [@_darshan_regmi](https://instagram.com/_darshan_regmi) | [@bydarshanregmi](https://instagram.com/bydarshanregmi)
-- 💻 GitHub: [@darshan-regmi](https://github.com/darshan-regmi)
+Visit `http://localhost:3000`
 
 ---
 
-**Made with ❤️ and ☕ in Nepal**
+## Environment Variables
 
-*"Build once, deploy everywhere"* — Ship your apps to the world with Veon 🚀
+Create `.env.local` in the project root:
+
+```bash
+# ─── Firebase (Client) ────────────────────────────────────────────────────────
+NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSy...
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
+NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789:web:abc123
+
+# ─── Firebase Admin (Server-side) ─────────────────────────────────────────────
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxx@your-project.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIE...\n-----END PRIVATE KEY-----\n"
+
+# ─── Supabase Storage ─────────────────────────────────────────────────────────
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# ─── GitHub (Private repo support) ────────────────────────────────────────────
+# Fine-grained PAT with Contents: Read-only on your app repos
+GITHUB_TOKEN=github_pat_...
+```
+
+> `GITHUB_TOKEN` is optional — without it the GitHub sync still works for public repos.
+> `FIREBASE_PRIVATE_KEY` must keep the `\n` newlines inside double quotes.
+
+---
+
+## Firestore Data Schema
+
+**Collection: `apps`**
+
+```typescript
+{
+  id: string;           // auto-generated by Firestore
+  name: string;         // "Veil Poetry App"
+  slug: string;         // "veil-poetry-app" — used in /apps/[slug] URL
+  description: string;
+  icon: string;         // Supabase Storage public URL
+  screenshots: string[];// Supabase Storage public URLs
+  features: string[];   // ["Minimal interface", "Dark mode", ...]
+  version: string;      // "1.0.0"
+  releaseDate: string;  // "2025-11-29"
+  downloadUrl: string;  // GitHub Releases APK URL
+  changelog: Record<string, string>; // { "1.0.0": "Initial release\n..." }
+  category: string;     // "entertainment"
+  downloads: number;    // incremented on each download
+  featured: boolean;    // shows on homepage if true
+  developer?: string;
+  githubRepo?: string;  // "owner/repo" — used for GitHub sync
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+```
+
+**Collection: `users`**
+
+```typescript
+{
+  email: string;
+  displayName?: string;
+  photoURL?: string;
+  role: "admin" | "user";
+  createdAt: Timestamp;
+}
+```
+
+> To make yourself admin: find your user document in Firestore → set `role` to `"admin"`.
+
+---
+
+## Admin Panel
+
+Access at `/admin` (requires admin role).
+
+| Action | Route |
+|---|---|
+| Dashboard + stats | `/admin` |
+| Add new app | `/admin/apps/add` |
+| Edit app | `/admin/apps/edit/[id]` |
+
+### GitHub Sync
+
+In the add/edit form, enter a repo as `owner/repo` and click **Sync**. It auto-fills:
+- Version number
+- Release date
+- APK download URL (first `.apk` asset)
+- Changelog (release notes)
+
+Requires a GitHub fine-grained PAT with **Contents: Read-only** permission set as `GITHUB_TOKEN` in `.env.local`.
+
+---
+
+## Firestore Index
+
+The featured apps query requires a composite index. On first load, Firestore will log an error with a direct link to create it. Click the link — it takes ~30 seconds.
+
+The index is: **Collection** `apps` → **Fields** `featured ASC, createdAt DESC`.
+
+---
+
+## Deployment
+
+### Cloudflare Pages
+
+1. Push to GitHub
+2. **Cloudflare Pages** → Connect GitHub repo
+3. Build settings:
+   - Framework: **Next.js**
+   - Build command: `npm run build`
+   - Build output: `.next`
+4. **Environment variables** → add all variables from `.env.local`
+
+---
+
+## Development Commands
+
+```bash
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run start    # Start production server
+npm run lint     # Run ESLint
+```
+
+---
+
+## License
+
+MIT — see [LICENSE](./LICENSE)
+
+---
+
+**Made with care in Nepal by [Darshan Regmi](https://github.com/darshan-regmi)**

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { uploadImage } from "@/lib/storage";
-import { addApp } from "@/lib/firestore";
+import { getAppById, updateApp } from "@/lib/firestore";
 import { getLatestRelease } from "@/lib/github";
+import type { App } from "@/lib/types";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import {
   ArrowLeft,
-  Upload,
+  Save,
   Loader2,
   Github,
   RefreshCw,
@@ -42,72 +43,91 @@ const APP_CATEGORIES = [
   "lifestyle",
 ];
 
-function toSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .trim();
-}
-
-export default function AddAppPage() {
+export default function EditAppPage() {
+  const { id } = useParams<{ id: string }>();
   const router = useRouter();
+
+  const [app, setApp] = useState<App | null>(null);
+  const [loadingApp, setLoadingApp] = useState(true);
   const [form, setForm] = useState({
     name: "",
     slug: "",
-    developer: "Darshan Regmi",
+    developer: "",
     description: "",
     category: "",
-    version: "1.0.0",
-    releaseDate: new Date().toISOString().split("T")[0],
+    version: "",
+    releaseDate: "",
     downloadUrl: "",
     features: "",
     changelogText: "",
     featured: false,
     githubRepo: "",
+    newVersionForChangelog: "",
   });
+
+  // Existing screenshots (URLs already in Firestore)
+  const [existingScreenshots, setExistingScreenshots] = useState<string[]>([]);
+  // New screenshots to upload
+  const [newScreenshotFiles, setNewScreenshotFiles] = useState<File[]>([]);
+  const [newScreenshotPreviews, setNewScreenshotPreviews] = useState<string[]>(
+    []
+  );
+  // Icon
   const [iconFile, setIconFile] = useState<File | null>(null);
   const [iconPreview, setIconPreview] = useState("");
-  const [screenshotFiles, setScreenshotFiles] = useState<File[]>([]);
-  const [screenshotPreviews, setScreenshotPreviews] = useState<string[]>([]);
+
   const [loading, setLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [progress, setProgress] = useState("");
 
+  useEffect(() => {
+    if (!id) return;
+    getAppById(id as string)
+      .then((data) => {
+        if (!data) return;
+        setApp(data);
+        setForm({
+          name: data.name,
+          slug: data.slug,
+          developer: data.developer ?? "",
+          description: data.description,
+          category: data.category,
+          version: data.version,
+          releaseDate: data.releaseDate,
+          downloadUrl: data.downloadUrl,
+          features: data.features.join("\n"),
+          changelogText: "",
+          featured: data.featured,
+          githubRepo: data.githubRepo ?? "",
+          newVersionForChangelog: data.version,
+        });
+        setExistingScreenshots(data.screenshots);
+        setIconPreview(data.icon);
+      })
+      .finally(() => setLoadingApp(false));
+  }, [id]);
+
   const set = (field: string, value: string | boolean) =>
     setForm((prev) => ({ ...prev, [field]: value }));
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.value;
-    setForm((prev) => ({
-      ...prev,
-      name,
-      slug: prev.slug === toSlug(prev.name) ? toSlug(name) : prev.slug,
-    }));
-  };
-
-  const handleIconChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setIconFile(file);
-    setIconPreview(URL.createObjectURL(file));
-  };
 
   const handleScreenshotsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
     if (!files.length) return;
-    setScreenshotFiles((prev) => [...prev, ...files]);
-    setScreenshotPreviews((prev) => [
+    setNewScreenshotFiles((prev) => [...prev, ...files]);
+    setNewScreenshotPreviews((prev) => [
       ...prev,
       ...files.map((f) => URL.createObjectURL(f)),
     ]);
     e.target.value = "";
   };
 
-  const removeScreenshot = (index: number) => {
-    setScreenshotFiles((prev) => prev.filter((_, i) => i !== index));
-    setScreenshotPreviews((prev) => prev.filter((_, i) => i !== index));
+  const removeExistingScreenshot = (index: number) => {
+    setExistingScreenshots((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeNewScreenshot = (index: number) => {
+    setNewScreenshotFiles((prev) => prev.filter((_, i) => i !== index));
+    setNewScreenshotPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const syncFromGitHub = async () => {
@@ -125,6 +145,7 @@ export default function AddAppPage() {
         releaseDate: release.releaseDate,
         downloadUrl: release.downloadUrl || prev.downloadUrl,
         changelogText: release.changelog || prev.changelogText,
+        newVersionForChangelog: release.version,
       }));
     } catch {
       alert("Failed to fetch GitHub release.");
@@ -138,12 +159,13 @@ export default function AddAppPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!app) return;
     setLoading(true);
 
     try {
-      const tempId = `${Date.now()}`;
+      const tempId = `${app.id}_${Date.now()}`;
 
-      let iconUrl = "";
+      let iconUrl = iconPreview;
       if (iconFile) {
         setProgress("Uploading icon...");
         iconUrl = await uploadFile(
@@ -152,12 +174,12 @@ export default function AddAppPage() {
         );
       }
 
-      let screenshotUrls: string[] = [];
-      if (screenshotFiles.length > 0) {
-        screenshotUrls = await Promise.all(
-          screenshotFiles.map((file, i) => {
+      let newUrls: string[] = [];
+      if (newScreenshotFiles.length > 0) {
+        newUrls = await Promise.all(
+          newScreenshotFiles.map((file, i) => {
             setProgress(
-              `Uploading screenshots (${i + 1}/${screenshotFiles.length})...`
+              `Uploading screenshots (${i + 1}/${newScreenshotFiles.length})...`
             );
             return uploadFile(
               file,
@@ -167,18 +189,22 @@ export default function AddAppPage() {
         );
       }
 
-      setProgress("Saving to Firestore...");
+      setProgress("Saving changes...");
 
       const features = form.features
         .split("\n")
         .map((f) => f.trim())
         .filter(Boolean);
 
-      const slug = form.slug || toSlug(form.name);
+      // Merge new changelog entry with existing
+      const changelog = { ...app.changelog };
+      if (form.changelogText && form.newVersionForChangelog) {
+        changelog[form.newVersionForChangelog] = form.changelogText;
+      }
 
-      await addApp({
+      await updateApp(app.id, {
         name: form.name,
-        slug,
+        slug: form.slug,
         developer: form.developer,
         description: form.description,
         category: form.category,
@@ -186,15 +212,10 @@ export default function AddAppPage() {
         releaseDate: form.releaseDate,
         downloadUrl: form.downloadUrl,
         icon: iconUrl,
-        screenshots: screenshotUrls,
+        screenshots: [...existingScreenshots, ...newUrls],
         features,
-        changelog: form.changelogText
-          ? { [form.version]: form.changelogText }
-          : {},
+        changelog,
         featured: form.featured,
-        downloads: 0,
-        isFree: true,
-        price: 0,
         ...(form.githubRepo && { githubRepo: form.githubRepo }),
       });
 
@@ -202,7 +223,7 @@ export default function AddAppPage() {
     } catch (error) {
       console.error(error);
       alert(
-        `Failed to add app: ${
+        `Failed to update app: ${
           error instanceof Error ? error.message : "Please try again."
         }`
       );
@@ -211,6 +232,29 @@ export default function AddAppPage() {
       setProgress("");
     }
   };
+
+  if (loadingApp) {
+    return (
+      <ProtectedRoute requireAdmin>
+        <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#f5f5f7" }}>
+          <Loader2 className="w-8 h-8 animate-spin text-[#0066cc]" />
+        </div>
+      </ProtectedRoute>
+    );
+  }
+
+  if (!app) {
+    return (
+      <ProtectedRoute requireAdmin>
+        <div className="min-h-screen flex flex-col items-center justify-center" style={{ backgroundColor: "#f5f5f7" }}>
+          <p className="text-[#7a7a7a] mb-4">App not found.</p>
+          <Link href="/admin">
+            <Button className="rounded-full bg-[#0066cc] hover:bg-[#0071e3] text-white">Back to Admin</Button>
+          </Link>
+        </div>
+      </ProtectedRoute>
+    );
+  }
 
   return (
     <ProtectedRoute requireAdmin>
@@ -240,10 +284,10 @@ export default function AddAppPage() {
               letterSpacing: 0,
             }}
           >
-            Add New App
+            Edit App
           </h1>
           <p className="text-[#7a7a7a] mb-6" style={{ fontSize: 14 }}>
-            Add a new application to your store
+            Update {app.name}
           </p>
           <div>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -251,11 +295,11 @@ export default function AddAppPage() {
               <div className="p-4 space-y-3" style={{ border: "1px solid #e0e0e0", borderRadius: 11, backgroundColor: "#f5f5f7" }}>
                 <Label className="flex items-center gap-2 text-sm font-semibold">
                   <Github className="w-4 h-4" />
-                  GitHub Integration (Optional)
+                  Sync from GitHub
                 </Label>
                 <div className="flex gap-2">
                   <Input
-                    placeholder="owner/repo  (e.g. darshan-regmi/veil)"
+                    placeholder="owner/repo"
                     value={form.githubRepo}
                     onChange={(e) => set("githubRepo", e.target.value)}
                     disabled={loading}
@@ -275,10 +319,6 @@ export default function AddAppPage() {
                     Sync
                   </Button>
                 </div>
-                <p className="text-xs text-[#7a7a7a]">
-                  Auto-fills version, release date, download URL, and changelog
-                  from the latest GitHub release.
-                </p>
               </div>
 
               {/* Name & Slug */}
@@ -289,8 +329,7 @@ export default function AddAppPage() {
                     id="name"
                     required
                     value={form.name}
-                    onChange={handleNameChange}
-                    placeholder="Veil Poetry App"
+                    onChange={(e) => set("name", e.target.value)}
                     disabled={loading}
                   />
                 </div>
@@ -301,11 +340,10 @@ export default function AddAppPage() {
                     required
                     value={form.slug}
                     onChange={(e) => set("slug", e.target.value)}
-                    placeholder="veil-poetry-app"
                     disabled={loading}
                   />
                   <p className="text-xs text-[#7a7a7a]">
-                    URL: /apps/{form.slug || "…"}
+                    URL: /apps/{form.slug}
                   </p>
                 </div>
               </div>
@@ -317,7 +355,6 @@ export default function AddAppPage() {
                   id="developer"
                   value={form.developer}
                   onChange={(e) => set("developer", e.target.value)}
-                  placeholder="Darshan Regmi"
                   disabled={loading}
                 />
               </div>
@@ -351,7 +388,6 @@ export default function AddAppPage() {
                   required
                   value={form.description}
                   onChange={(e) => set("description", e.target.value)}
-                  placeholder="A minimal poetry reading app with curated verses and dark mode…"
                   className="min-h-[100px]"
                   disabled={loading}
                 />
@@ -366,7 +402,6 @@ export default function AddAppPage() {
                     required
                     value={form.version}
                     onChange={(e) => set("version", e.target.value)}
-                    placeholder="1.0.0"
                     disabled={loading}
                   />
                 </div>
@@ -392,22 +427,18 @@ export default function AddAppPage() {
                   required
                   value={form.downloadUrl}
                   onChange={(e) => set("downloadUrl", e.target.value)}
-                  placeholder="https://github.com/owner/repo/releases/download/v1.0.0/app.apk"
                   disabled={loading}
                 />
-                <p className="text-xs text-[#7a7a7a]">
-                  Host on GitHub Releases for free unlimited storage.
-                </p>
               </div>
 
               {/* App Icon */}
               <div className="space-y-1.5">
-                <Label htmlFor="icon">App Icon</Label>
+                <Label>App Icon</Label>
                 <div className="flex items-start gap-4">
                   {iconPreview ? (
                     <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0" style={{ border: "1px solid #e0e0e0" }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={iconPreview} alt="Icon preview" className="object-cover w-full h-full" />
+                      <img src={iconPreview} alt="Icon" className="object-cover w-full h-full" />
                     </div>
                   ) : (
                     <div className="w-20 h-20 rounded-2xl border-2 border-dashed flex items-center justify-center shrink-0" style={{ borderColor: "#e0e0e0", backgroundColor: "#f5f5f7" }}>
@@ -416,43 +447,83 @@ export default function AddAppPage() {
                   )}
                   <div className="flex-1">
                     <Input
-                      id="icon"
                       type="file"
                       accept="image/*"
-                      onChange={handleIconChange}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        setIconFile(file);
+                        setIconPreview(URL.createObjectURL(file));
+                      }}
                       disabled={loading}
                     />
                     <p className="text-xs text-stone-400 mt-1.5">
-                      Recommended: 512×512px PNG · Uploaded to Firebase Storage
+                      Leave empty to keep current icon.
                     </p>
                   </div>
                 </div>
               </div>
 
               {/* Screenshots */}
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <Label>Screenshots</Label>
-                {screenshotPreviews.length > 0 && (
-                  <div className="flex gap-2 flex-wrap mb-3">
-                    {screenshotPreviews.map((src, i) => (
-                      <div
-                        key={i}
-                        className="relative w-14 h-24 rounded-lg overflow-hidden group"
-                        style={{ border: "1px solid #e0e0e0" }}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={src} alt={`Screenshot ${i + 1}`} className="object-cover w-full h-full" />
-                        <button
-                          type="button"
-                          onClick={() => removeScreenshot(i)}
-                          className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+
+                {/* Existing */}
+                {existingScreenshots.length > 0 && (
+                  <div>
+                    <p className="text-xs text-stone-500 mb-2">
+                      Current screenshots:
+                    </p>
+                    <div className="flex gap-2 flex-wrap">
+                      {existingScreenshots.map((src, i) => (
+                        <div
+                          key={i}
+                          className="relative w-14 h-24 rounded-lg overflow-hidden group"
+                          style={{ border: "1px solid #e0e0e0" }}
                         >
-                          <X className="w-3 h-3 text-white" />
-                        </button>
-                      </div>
-                    ))}
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={src} alt={`Screenshot ${i + 1}`} className="object-cover w-full h-full" />
+                          <button
+                            type="button"
+                            onClick={() => removeExistingScreenshot(i)}
+                            className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-3 h-3 text-white" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
+
+                {/* New */}
+                {newScreenshotPreviews.length > 0 && (
+                  <div>
+                    <p className="text-xs text-stone-500 mb-2">
+                      New screenshots to upload:
+                    </p>
+                    <div className="flex gap-2 flex-wrap">
+                      {newScreenshotPreviews.map((src, i) => (
+                        <div
+                          key={i}
+                          className="relative w-14 h-24 rounded-lg overflow-hidden group"
+                          style={{ border: "1px solid rgba(0,102,204,0.3)" }}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={src} alt={`New ${i + 1}`} className="object-cover w-full h-full" />
+                          <button
+                            type="button"
+                            onClick={() => removeNewScreenshot(i)}
+                            className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-3 h-3 text-white" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <Input
                   type="file"
                   accept="image/*"
@@ -460,9 +531,6 @@ export default function AddAppPage() {
                   onChange={handleScreenshotsChange}
                   disabled={loading}
                 />
-                <p className="text-xs text-[#7a7a7a]">
-                  Select multiple screenshots (portrait format recommended).
-                </p>
               </div>
 
               {/* Features */}
@@ -472,30 +540,40 @@ export default function AddAppPage() {
                   id="features"
                   value={form.features}
                   onChange={(e) => set("features", e.target.value)}
-                  placeholder={
-                    "Minimal, distraction-free interface\nDark mode optimized\nOffline reading support\nCurated poetry collection"
-                  }
                   className="min-h-[120px] font-mono text-sm"
                   disabled={loading}
                 />
                 <p className="text-xs text-[#7a7a7a]">One feature per line.</p>
               </div>
 
-              {/* Changelog */}
-              <div className="space-y-1.5">
-                <Label htmlFor="changelog">
-                  Changelog for v{form.version || "…"}
+              {/* Add changelog for new version */}
+              <div className="p-4 space-y-3" style={{ border: "1px solid #e0e0e0", borderRadius: 11, backgroundColor: "#f5f5f7" }}>
+                <Label className="text-sm font-semibold">
+                  Add Changelog Entry
                 </Label>
-                <Textarea
-                  id="changelog"
-                  value={form.changelogText}
-                  onChange={(e) => set("changelogText", e.target.value)}
-                  placeholder={
-                    "Initial release\n• Minimal poetry reading interface\n• Dark mode support\n• Curated verse collection"
-                  }
-                  className="min-h-[100px]"
-                  disabled={loading}
-                />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <Input
+                    placeholder="Version (e.g. 1.1.0)"
+                    value={form.newVersionForChangelog}
+                    onChange={(e) =>
+                      set("newVersionForChangelog", e.target.value)
+                    }
+                    disabled={loading}
+                  />
+                  <div className="md:col-span-2">
+                    <Textarea
+                      placeholder="What's new in this version..."
+                      value={form.changelogText}
+                      onChange={(e) => set("changelogText", e.target.value)}
+                      className="min-h-[80px]"
+                      disabled={loading}
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-[#7a7a7a]">
+                  Leave empty to keep existing changelog. Adds to version
+                  history.
+                </p>
               </div>
 
               {/* Featured toggle */}
@@ -539,12 +617,12 @@ export default function AddAppPage() {
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                      Adding…
+                      Saving…
                     </>
                   ) : (
                     <>
-                      <Upload className="w-4 h-4 mr-2" />
-                      Add App
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Changes
                     </>
                   )}
                 </Button>

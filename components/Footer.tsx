@@ -1,146 +1,122 @@
 import React from "react";
-import { Mail, Twitter, Github, Linkedin } from "lucide-react";
+import Link from "next/link";
+
+const sections = [
+  {
+    heading: "Apps",
+    links: [
+      { label: "All Apps", href: "/apps" },
+      { label: "Featured", href: "/apps" },
+    ],
+  },
+  {
+    heading: "Books",
+    links: [
+      { label: "All Books", href: "/books" },
+      { label: "Featured", href: "/books" },
+    ],
+  },
+  {
+    heading: "Company",
+    links: [
+      { label: "About", href: "/about" },
+      { label: "Contact", href: "/contact" },
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Terms of Service", href: "/terms" },
+    ],
+  },
+];
 
 export default function Footer() {
   return (
-    <footer className="border-t border-stone-200 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+    <footer style={{ backgroundColor: "#f5f5f7" }}>
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-10">
           {/* Brand */}
-          <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center mb-4">
+          <div className="col-span-2">
+            <Link href="/" className="inline-flex items-center mb-4">
               <span
-                className="text-stone-900 text-2xl font-serif tracking-wide"
-                style={{
-                  fontFamily: "Georgia, serif",
-                  letterSpacing: "0.02em",
-                }}
+                className="text-[#1d1d1f] text-xl font-semibold tracking-tight"
+                style={{ fontFamily: '"SF Pro Display", system-ui, -apple-system, sans-serif' }}
               >
                 ve
               </span>
-              <div className="relative inline-flex items-center justify-center border-2 border-stone-900 w-8 h-8 mx-0.5">
-                <span
-                  className="text-stone-900 text-2xl font-serif"
-                  style={{ fontFamily: "Georgia, serif" }}
-                >
-                  on
-                </span>
-              </div>
-            </div>
-            <p className="text-sm text-stone-600 leading-relaxed max-w-sm">
-              A curated collection of handcrafted apps and ebooks. Built by one
+              <span
+                className="text-[#1d1d1f] text-xl font-semibold tracking-tight border border-[#1d1d1f] px-1 mx-0.5"
+                style={{ fontFamily: '"SF Pro Display", system-ui, -apple-system, sans-serif' }}
+              >
+                on
+              </span>
+            </Link>
+            <p
+              className="text-[#333333] max-w-xs"
+              style={{ fontSize: 12, lineHeight: 1.5, letterSpacing: "-0.12px" }}
+            >
+              A curated collection of handcrafted apps and books. Built by one
               creator, for everyone.
             </p>
           </div>
 
-          {/* Products */}
-          <div>
-            <h3 className="text-sm font-semibold text-stone-900 mb-4">
-              Products
-            </h3>
-            <ul className="space-y-3">
-              <li>
-                <a
-                  href="/products"
-                  className="text-sm text-stone-600 hover:text-amber-900 transition"
-                >
-                  Apps
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/products"
-                  className="text-sm text-stone-600 hover:text-amber-900 transition"
-                >
-                  All Products
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h3 className="text-sm font-semibold text-stone-900 mb-4">
-              Company
-            </h3>
-            <ul className="space-y-3">
-              <li>
-                <a
-                  href="/about"
-                  className="text-sm text-stone-600 hover:text-amber-900 transition"
-                >
-                  About
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/contact"
-                  className="text-sm text-stone-600 hover:text-amber-900 transition"
-                >
-                  Contact
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/privacy"
-                  className="text-sm text-stone-600 hover:text-amber-900 transition"
-                >
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/terms"
-                  className="text-sm text-stone-600 hover:text-amber-900 transition"
-                >
-                  Terms of Service
-                </a>
-              </li>
-            </ul>
-          </div>
+          {/* Link columns */}
+          {sections.map((s) => (
+            <div key={s.heading}>
+              <h3
+                className="text-[#1d1d1f] font-semibold mb-4"
+                style={{ fontSize: 14, lineHeight: 1.29, letterSpacing: "-0.224px" }}
+              >
+                {s.heading}
+              </h3>
+              <ul>
+                {s.links.map((l) => (
+                  <li key={l.label}>
+                    <Link
+                      href={l.href}
+                      className="text-[#333333] hover:text-[#0066cc] transition-colors"
+                      style={{ fontSize: 17, lineHeight: 2.41, letterSpacing: 0 }}
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        {/* Bottom Section */}
-        <div className="pt-8 border-t border-stone-200 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-stone-500">
-            © {new Date().getFullYear()} Veon. Crafted with care.
+        <div
+          className="pt-8 border-t border-[#e0e0e0] flex flex-col md:flex-row items-center justify-between gap-3"
+        >
+          <p
+            className="text-[#7a7a7a]"
+            style={{ fontSize: 12, lineHeight: 1, letterSpacing: "-0.12px" }}
+          >
+            © {new Date().getFullYear()} Veon. All rights reserved.
           </p>
-
-          {/* Social Links */}
-          <div className="flex items-center gap-4">
+          <div className="flex gap-6">
             <a
               href="mailto:darshanregmi.official@gmail.com"
-              className="w-9 h-9 rounded-full bg-stone-700 text-stone-50 flex items-center justify-center hover:bg-amber-900 transition"
-              aria-label="Email"
+              className="text-[#7a7a7a] hover:text-[#0066cc] transition-colors"
+              style={{ fontSize: 12, letterSpacing: "-0.12px" }}
             >
-              <Mail className="w-4 h-4" />
+              Email
             </a>
             <a
               href="https://x.com/darshanregmi_np"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-9 h-9 rounded-full bg-stone-700 text-stone-50 flex items-center justify-center hover:bg-amber-900 transition"
-              aria-label="Twitter"
+              className="text-[#7a7a7a] hover:text-[#0066cc] transition-colors"
+              style={{ fontSize: 12, letterSpacing: "-0.12px" }}
             >
-              <Twitter className="w-4 h-4" />
+              X (Twitter)
             </a>
             <a
               href="https://github.com/darshan-regmi"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-9 h-9 rounded-full bg-stone-700 text-stone-50 flex items-center justify-center hover:bg-amber-900 transition"
-              aria-label="GitHub"
+              className="text-[#7a7a7a] hover:text-[#0066cc] transition-colors"
+              style={{ fontSize: 12, letterSpacing: "-0.12px" }}
             >
-              <Github className="w-4 h-4" />
-            </a>
-            <a
-              href="https://linkedin.com/in/darshan-regmi"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 rounded-full bg-stone-700 text-stone-50 flex items-center justify-center hover:bg-amber-900 transition"
-              aria-label="LinkedIn"
-            >
-              <Linkedin className="w-4 h-4" />
+              GitHub
             </a>
           </div>
         </div>

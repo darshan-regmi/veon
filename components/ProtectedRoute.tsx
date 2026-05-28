@@ -20,7 +20,7 @@ export default function ProtectedRoute({
     if (!loading) {
       if (!user) {
         // Not authenticated, redirect to login
-        router.push("/login");
+        router.push("/auth/login");
       } else if (requireAdmin && !isAdmin) {
         // Not an admin, redirect to home
         router.push("/");

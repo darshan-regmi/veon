@@ -1,109 +1,163 @@
 "use client";
 
-import Navbar from "@/components/Navbar";
 import { useState } from "react";
-import { Mail, User, MessageSquare, Send } from "lucide-react";
+import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Mail, User, MessageSquare, Send } from "lucide-react";
 
 export default function ContactPage() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+
+  const inputStyle = {
+    fontSize: 17,
+    lineHeight: 1.47,
+    letterSpacing: "-0.374px",
+    height: 44,
+    borderRadius: 9999,
+    border: "1px solid #e0e0e0",
+    backgroundColor: "#ffffff",
+    color: "#1d1d1f",
+    paddingLeft: 48,
+    paddingRight: 20,
+    width: "100%",
+  } as const;
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-900">
+    <div style={{ backgroundColor: "#ffffff", color: "#1d1d1f" }}>
       <Navbar />
 
-      {/* Header */}
-      <section className="bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-100 border-b border-stone-200">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <h1 className="text-4xl md:text-5xl font-medium mb-4">Contact Me</h1>
-          <p className="text-stone-600 text-lg mx-auto leading-relaxed">
-            Whether it's an idea, a collaboration, or just a hello — I'd love to
-            hear from you.
+      {/* Header tile */}
+      <section style={{ backgroundColor: "#f5f5f7", paddingTop: 80, paddingBottom: 80 }}>
+        <div className="max-w-[980px] mx-auto px-4 sm:px-6 text-center">
+          <h1
+            className="text-[#1d1d1f] mb-4"
+            style={{
+              fontFamily: '"SF Pro Display", system-ui, -apple-system, sans-serif',
+              fontSize: "clamp(34px, 5vw, 56px)",
+              fontWeight: 600,
+              lineHeight: 1.07,
+              letterSpacing: "-0.28px",
+            }}
+          >
+            Contact
+          </h1>
+          <p
+            className="text-[#7a7a7a] max-w-xl mx-auto"
+            style={{ fontSize: 21, lineHeight: 1.19, letterSpacing: "0.196px" }}
+          >
+            Whether it&apos;s an idea, a collaboration, or just a hello — I&apos;d
+            love to hear from you.
           </p>
         </div>
       </section>
 
-      {/* Contact Form */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-white rounded-2xl shadow-md border border-stone-200 p-10 hover:shadow-lg transition-shadow">
-          <form className="space-y-8">
+      {/* Form section */}
+      <section className="max-w-[680px] mx-auto px-4 sm:px-6 py-20">
+        <div
+          className="p-10"
+          style={{ borderRadius: 18, border: "1px solid #e0e0e0", backgroundColor: "#ffffff" }}
+        >
+          <form className="space-y-6">
             {/* Name */}
-            <div>
-              <label className="block text-stone-700 font-medium mb-2">
+            <div className="space-y-2">
+              <label
+                className="block text-[#1d1d1f] font-semibold"
+                style={{ fontSize: 14, letterSpacing: "-0.224px" }}
+              >
                 Name
               </label>
               <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 w-5 h-5" />
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#7a7a7a]" />
                 <input
                   type="text"
                   placeholder="Your name"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full pl-12 pr-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-900 focus:border-amber-900 transition-all"
+                  style={inputStyle}
+                  className="focus:outline-none focus:border-[#0066cc] placeholder:text-[#7a7a7a] transition-colors"
                 />
               </div>
             </div>
 
             {/* Email */}
-            <div>
-              <label className="block text-stone-700 font-medium mb-2">
+            <div className="space-y-2">
+              <label
+                className="block text-[#1d1d1f] font-semibold"
+                style={{ fontSize: 14, letterSpacing: "-0.224px" }}
+              >
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 w-5 h-5" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#7a7a7a]" />
                 <input
                   type="email"
                   placeholder="you@example.com"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full pl-12 pr-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-900 focus:border-amber-900 transition-all"
+                  style={inputStyle}
+                  className="focus:outline-none focus:border-[#0066cc] placeholder:text-[#7a7a7a] transition-colors"
                 />
               </div>
             </div>
 
             {/* Message */}
-            <div>
-              <label className="block text-stone-700 font-medium mb-2">
+            <div className="space-y-2">
+              <label
+                className="block text-[#1d1d1f] font-semibold"
+                style={{ fontSize: 14, letterSpacing: "-0.224px" }}
+              >
                 Message
               </label>
               <div className="relative">
-                <MessageSquare className="absolute left-4 top-4 text-stone-400 w-5 h-5" />
+                <MessageSquare className="absolute left-4 top-4 w-4 h-4 text-[#7a7a7a]" />
                 <textarea
                   rows={5}
-                  placeholder="Write your message..."
+                  placeholder="Write your message…"
                   value={form.message}
-                  onChange={(e) =>
-                    setForm({ ...form, message: e.target.value })
-                  }
-                  className="w-full pl-12 pr-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-900 focus:border-amber-900 resize-none transition-all"
+                  onChange={(e) => setForm({ ...form, message: e.target.value })}
+                  className="w-full focus:outline-none focus:border-[#0066cc] placeholder:text-[#7a7a7a] transition-colors resize-none"
+                  style={{
+                    fontSize: 17,
+                    lineHeight: 1.47,
+                    letterSpacing: "-0.374px",
+                    borderRadius: 11,
+                    border: "1px solid #e0e0e0",
+                    backgroundColor: "#ffffff",
+                    color: "#1d1d1f",
+                    paddingLeft: 48,
+                    paddingRight: 20,
+                    paddingTop: 12,
+                    paddingBottom: 12,
+                  }}
                 />
               </div>
             </div>
 
-            {/* Submit Button */}
+            {/* Submit */}
             <button
               type="button"
-              className="w-full bg-amber-900 text-amber-50 py-3.5 rounded-xl font-medium text-lg hover:bg-amber-950 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 group"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#0066cc] text-white hover:bg-[#0071e3] active:scale-95 transition-all"
+              style={{ fontSize: 17, padding: "14px 28px", letterSpacing: "-0.374px" }}
             >
-              <span>Send Message</span>
-              <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              Send Message
+              <Send className="w-4 h-4" />
             </button>
           </form>
         </div>
 
-        {/* Direct Contact */}
-        <div className="text-center mt-12">
-          <p className="text-stone-600 text-lg mb-4">
-            Or reach me directly through:
+        {/* Direct contact */}
+        <div className="text-center mt-14">
+          <p
+            className="text-[#7a7a7a] mb-4"
+            style={{ fontSize: 17, lineHeight: 1.47, letterSpacing: "-0.374px" }}
+          >
+            Or reach me directly:
           </p>
-          <div className="space-y-3">
+          <div className="space-y-1">
             <a
               href="mailto:darshanregmi.official@gmail.com"
-              className="block text-amber-900 font-medium hover:text-amber-950 transition-colors"
+              className="block text-[#0066cc] hover:text-[#0071e3] transition-colors"
+              style={{ fontSize: 17, lineHeight: 2.41 }}
             >
               darshanregmi.official@gmail.com
             </a>
@@ -111,7 +165,8 @@ export default function ContactPage() {
               href="https://instagram.com/_darshan_regmi"
               target="_blank"
               rel="noopener noreferrer"
-              className="block text-amber-900 font-medium hover:text-amber-950 transition-colors"
+              className="block text-[#0066cc] hover:text-[#0071e3] transition-colors"
+              style={{ fontSize: 17, lineHeight: 2.41 }}
             >
               Instagram — @_darshan_regmi
             </a>
@@ -119,7 +174,6 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Footer */}
       <Footer />
     </div>
   );
