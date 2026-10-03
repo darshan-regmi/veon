@@ -1,5 +1,29 @@
+import type { Metadata } from "next";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { SITE_URL } from "@/lib/site";
+
+export const metadata: Metadata = {
+  title: "Terms of Service",
+  description:
+    "The terms that govern your use of Veon, including app downloads, eBook licences, accounts and acceptable use.",
+  alternates: { canonical: `${SITE_URL}/terms` },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "article",
+    locale: "en_US",
+    url: `${SITE_URL}/terms`,
+    title: "Terms of Service | Veon",
+    description: "The terms that govern your use of Veon.",
+    siteName: "Veon",
+  },
+  twitter: {
+    card: "summary",
+    title: "Terms of Service | Veon",
+    description: "The terms that govern your use of Veon.",
+    site: "@darshanregmi_np",
+  },
+};
 
 const sections = [
   {

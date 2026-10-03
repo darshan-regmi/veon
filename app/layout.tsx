@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
+import { SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,19 +31,19 @@ export const metadata: Metadata = {
   creator: "Darshan Regmi",
   publisher: "Darshan Regmi",
 
-  metadataBase: new URL("https://veon.darshanregmi.com.np"),
+  metadataBase: new URL(SITE_URL),
 
-  alternates: {
-    canonical: "/",
-    languages: {
-      "en-US": "/",
-    },
-  },
+  // NOTE: no `alternates.canonical` here on purpose. Root-layout metadata is
+  // inherited by every route, so a canonical of "/" declared up here told
+  // Google that /about, /contact, /privacy and /terms were all duplicates of
+  // the homepage. Each route now declares its own canonical (or omits it).
+  // The root layout also owns `openGraph`/`twitter` defaults; individual pages
+  // override them where they have specific imagery.
 
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://veon.darshanregmi.com.np",
+    url: SITE_URL,
     title: "Veon - Download Premium Android Apps & eBooks | Darshan Regmi",
     description:
       "Download premium Android APKs and eBooks by Darshan Regmi. Handcrafted productivity apps, poetry collections from Nepal.",
@@ -121,13 +122,9 @@ export const metadata: Metadata = {
   },
 
   other: {
-    "revisit-after": "7 days",
-    distribution: "global",
-    rating: "general",
-    "geo.region": "NP-P4",
-    "geo.placename": "Pokhara",
-    "geo.position": "28.209583;83.991111",
-    ICBM: "28.209583, 83.991111",
+    // Legacy ICBM geo-targeting and non-standard directives removed. Google's
+    // geo signals come from the JSON-LD PostalAddress below and from
+    // Search Console's country targeting — these meta tags were ignored.
   },
 };
 
@@ -155,7 +152,7 @@ export default function RootLayout({
           target: {
             "@type": "EntryPoint",
             urlTemplate:
-              "https://veon.darshanregmi.com.np/products?search={search_term_string}",
+              "https://veon.darshanregmi.com.np/apps?search={search_term_string}",
           },
           "query-input": "required name=search_term_string",
         },
@@ -271,8 +268,10 @@ export default function RootLayout({
     ],
   };
 
+  // No `prefix="og: https://ogp.me/ns#"` on <html> — that RDFa attribute is
+  // long deprecated. Next emits spec-compliant `property="og:*"` tags itself.
   return (
-    <html lang="en" prefix="og: https://ogp.me/ns#">
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link

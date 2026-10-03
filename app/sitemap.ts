@@ -1,45 +1,49 @@
-import { MetadataRoute } from 'next'
+import type { MetadataRoute } from "next";
+import { getAllApps, getAllBooks } from "@/lib/firestore-server";
+import { SITE_URL } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://veon.darshanregmi.com.np'
-  const currentDate = new Date().toISOString()
+// Regenerate hourly rather than freezing the URL list at build time, so a
+// newly published app or book is discoverable without a redeploy.
+export const revalidate = 3600;
+export const runtime = "edge";
 
-  return [
-    {
-      url: baseUrl,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/products`,
-      lastModified: currentDate,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/privacy`,
-      lastModified: currentDate,
-      changeFrequency: 'yearly',
-      priority: 0.4,
-    },
-    {
-      url: `${baseUrl}/terms`,
-      lastModified: currentDate,
-      changeFrequency: 'yearly',
-      priority: 0.4,
-    },
-  ]
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const now = new Date();
+
+  const staticRoutes: MetadataRoute.Sitemap = [
+    { url: `${SITE_URL}/`, lastModified: now, changeFrequency: "daily", priority: 1.0 },
+    { url: `${SITE_URL}/apps`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
+    { url: `${SITE_URL}/books`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
+    { url: `${SITE_URL}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${SITE_URL}/contact`, lastModified: now, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${SITE_URL}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${SITE_URL}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.2 },
+  ];
+
+  // A Firestore outage must not blank the sitemap — keep the static routes and
+  // log, rather than 500 and drop every URL from the index.
+  let itemRoutes: MetadataRoute.Sitemap = [];
+
+  try {
+    const [apps, books] = await Promise.all([getAllApps(), getAllBooks()]);
+
+    itemRoutes = [
+      ...apps.map((app) => ({
+        url: `${SITE_URL}/apps/${app.slug}`,
+        lastModified: app.updatedAt ?? now,
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      })),
+      ...books.map((book) => ({
+        url: `${SITE_URL}/books/${book.slug}`,
+        lastModified: book.updatedAt ?? now,
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      })),
+    ];
+  } catch (error) {
+    console.error("sitemap: failed to load apps/books", error);
+  }
+
+  return [...staticRoutes, ...itemRoutes];
 }

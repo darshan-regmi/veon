@@ -1,5 +1,29 @@
+import type { Metadata } from "next";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { SITE_URL } from "@/lib/site";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description:
+    "How Veon collects, uses and protects your personal information when you use the site or download an app or eBook.",
+  alternates: { canonical: `${SITE_URL}/privacy` },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "article",
+    locale: "en_US",
+    url: `${SITE_URL}/privacy`,
+    title: "Privacy Policy | Veon",
+    description: "How Veon handles your personal information.",
+    siteName: "Veon",
+  },
+  twitter: {
+    card: "summary",
+    title: "Privacy Policy | Veon",
+    description: "How Veon handles your personal information.",
+    site: "@darshanregmi_np",
+  },
+};
 
 const sections = [
   {

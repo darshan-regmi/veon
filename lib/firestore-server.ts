@@ -69,7 +69,7 @@ function assertProject(): void {
  */
 async function listCollection(collectionId: string): Promise<Row[]> {
   assertProject();
-  const res = await fetch(authedUrl(`${collectionId}?pageSize=${MAX_DOCS}`), {
+  const res = await fetch(authedUrl(`${DOCS_BASE}/${collectionId}?pageSize=${MAX_DOCS}`), {
     next: { revalidate: 3600 },
   });
 
