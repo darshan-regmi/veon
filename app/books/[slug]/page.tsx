@@ -1,15 +1,14 @@
-"use client";
-
 export const runtime = "edge";
 
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DownloadButton from "@/components/DownloadButton";
-import { getBookBySlug, incrementBookDownloads } from "@/lib/firestore";
-import type { Book } from "@/lib/types";
+import { getBookBySlug } from "@/lib/firestore-server";
+import { bookJsonLd } from "@/lib/seo";
+import { absoluteUrl, truncate } from "@/lib/site";
 import {
   ArrowLeft,
   Calendar,
@@ -20,89 +19,79 @@ import {
   Globe,
 } from "lucide-react";
 
-export default function BookDetailPage() {
-  const { slug } = useParams<{ slug: string }>();
-  const [book, setBook] = useState<Book | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
+type Params = { params: Promise<{ slug: string }> };
 
-  useEffect(() => {
-    if (!slug) return;
-    getBookBySlug(slug as string)
-      .then((data) => {
-        if (!data) setNotFound(true);
-        else setBook(data);
-      })
-      .finally(() => setLoading(false));
-  }, [slug]);
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { slug } = await params;
+  const book = await getBookBySlug(slug).catch(() => null);
 
-  if (loading) {
-    return (
-      <div style={{ backgroundColor: "#ffffff" }}>
-        <Navbar />
-        <div className="max-w-[980px] mx-auto px-4 sm:px-6 py-12 animate-pulse">
-          <div className="h-4 bg-[#f5f5f7] rounded w-24 mb-10" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div className="space-y-4">
-              <div className="flex items-start gap-5">
-                <div className="w-28 h-40 bg-[#f5f5f7] rounded-[8px] shrink-0" />
-                <div className="flex-1 space-y-2 pt-1">
-                  <div className="h-7 bg-[#f5f5f7] rounded w-3/4" />
-                  <div className="h-4 bg-[#f5f5f7] rounded w-1/2" />
-                </div>
-              </div>
-              <div className="h-12 bg-[#f5f5f7] rounded-full w-48 mt-4" />
-            </div>
-            <div className="h-72 bg-[#f5f5f7] rounded-[18px]" />
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
+  // A missing book must not be indexed, and must not inherit the root layout's
+  // canonical (which points at "/") — that would tell Google /books/anything is
+  // a duplicate of the homepage.
+  if (!book) {
+    return {
+      title: "Book not found",
+      robots: { index: false, follow: true },
+    };
   }
 
-  if (notFound || !book) {
-    return (
-      <div style={{ backgroundColor: "#ffffff" }}>
-        <Navbar />
-        <div className="max-w-[980px] mx-auto px-4 py-24 text-center">
-          <div
-            className="w-16 h-16 flex items-center justify-center mx-auto mb-6"
-            style={{ backgroundColor: "#f5f5f7", borderRadius: 9999 }}
-          >
-            <BookOpen className="w-8 h-8 text-[#7a7a7a]" />
-          </div>
-          <h1
-            className="text-[#1d1d1f] mb-3"
-            style={{
-              fontFamily: '"SF Pro Display", system-ui, -apple-system, sans-serif',
-              fontSize: 34,
-              fontWeight: 600,
-              letterSpacing: "-0.374px",
-            }}
-          >
-            Book not found
-          </h1>
-          <p className="text-[#7a7a7a] mb-8" style={{ fontSize: 17 }}>
-            The book you&apos;re looking for doesn&apos;t exist or has been removed.
-          </p>
-          <Link
-            href="/books"
-            className="inline-flex items-center gap-2 rounded-full bg-[#0066cc] text-white hover:bg-[#0071e3] active:scale-95 transition-all"
-            style={{ fontSize: 17, padding: "11px 22px", letterSpacing: "-0.374px" }}
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Browse All Books
-          </Link>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
+  const url = absoluteUrl(`/books/${book.slug}`);
+  const description = truncate(
+    book.excerpt ||
+      book.description ||
+      `${book.title} by ${book.author} — free PDF download.`
+  );
+  const image = book.cover || "/og-image.png";
+
+  return {
+    title: `${book.title} — Free PDF Download`,
+    description,
+    alternates: { canonical: url },
+    keywords: [
+      `${book.title} pdf`,
+      `${book.title} ebook`,
+      `${book.genre} book`,
+      book.author,
+      "free ebook download",
+      "Darshan Regmi",
+    ].filter(Boolean),
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      url,
+      title: `${book.title} — Free PDF Download`,
+      description,
+      siteName: "Veon",
+      images: [{ url: image, alt: `${book.title} book cover` }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${book.title} — Free PDF Download`,
+      description,
+      site: "@darshanregmi_np",
+      images: [image],
+    },
+  };
+}
+
+export default async function BookDetailPage({ params }: Params) {
+  const { slug } = await params;
+  const book = await getBookBySlug(slug).catch(() => null);
+
+  // Real 404 status instead of a soft "not found" 200 — lets Google drop the
+  // URL from the index instead of storing a thin page.
+  if (!book) notFound();
+
+  const jsonLd = bookJsonLd(book);
 
   return (
     <div style={{ backgroundColor: "#ffffff", color: "#1d1d1f" }}>
       <Navbar />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       <div className="max-w-[980px] mx-auto px-4 sm:px-6 py-10 md:py-16">
         {/* Back */}
@@ -196,7 +185,7 @@ export default function BookDetailPage() {
 
             {/* CTA */}
             <DownloadButton
-              onTrack={() => incrementBookDownloads(book.id)}
+              track={{ kind: "book", id: book.id }}
               downloadUrl={book.pdfUrl}
               label="Download PDF"
             />
@@ -309,7 +298,7 @@ export default function BookDetailPage() {
             Free PDF · No account required
           </p>
           <DownloadButton
-            onTrack={() => incrementBookDownloads(book.id)}
+            track={{ kind: "book", id: book.id }}
             downloadUrl={book.pdfUrl}
             label="Download PDF"
           />

@@ -1,16 +1,15 @@
-"use client";
-
 export const runtime = "edge";
 
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Screenshots from "@/components/Screenshots";
 import DownloadButton from "@/components/DownloadButton";
-import { getAppBySlug, incrementDownloads } from "@/lib/firestore";
-import type { App } from "@/lib/types";
+import { getAppBySlug } from "@/lib/firestore-server";
+import { appJsonLd } from "@/lib/seo";
+import { absoluteUrl, truncate } from "@/lib/site";
 import {
   ArrowLeft,
   Calendar,
@@ -21,93 +20,81 @@ import {
   GitBranch,
 } from "lucide-react";
 
-export default function AppDetailPage() {
-  const { slug } = useParams<{ slug: string }>();
-  const [app, setApp] = useState<App | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
+type Params = { params: Promise<{ slug: string }> };
 
-  useEffect(() => {
-    if (!slug) return;
-    getAppBySlug(slug as string)
-      .then((data) => {
-        if (!data) setNotFound(true);
-        else setApp(data);
-      })
-      .finally(() => setLoading(false));
-  }, [slug]);
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { slug } = await params;
+  const app = await getAppBySlug(slug).catch(() => null);
 
-  if (loading) {
-    return (
-      <div style={{ backgroundColor: "#ffffff" }}>
-        <Navbar />
-        <div className="max-w-[980px] mx-auto px-4 sm:px-6 py-12 animate-pulse">
-          <div className="h-4 bg-[#f5f5f7] rounded w-24 mb-10" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div className="space-y-4">
-              <div className="flex items-start gap-5">
-                <div className="w-20 h-20 bg-[#f5f5f7] rounded-2xl shrink-0" />
-                <div className="flex-1 space-y-2 pt-1">
-                  <div className="h-7 bg-[#f5f5f7] rounded w-3/4" />
-                  <div className="h-4 bg-[#f5f5f7] rounded w-1/2" />
-                </div>
-              </div>
-              <div className="h-12 bg-[#f5f5f7] rounded-full w-48 mt-4" />
-            </div>
-            <div className="h-96 bg-[#f5f5f7] rounded-[18px]" />
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
+  // A missing app must not be indexed, and must not inherit the root layout's
+  // canonical (which points at "/") — that would tell Google /apps/anything is
+  // a duplicate of the homepage.
+  if (!app) {
+    return {
+      title: "App not found",
+      robots: { index: false, follow: true },
+    };
   }
 
-  if (notFound || !app) {
-    return (
-      <div style={{ backgroundColor: "#ffffff" }}>
-        <Navbar />
-        <div className="max-w-[980px] mx-auto px-4 py-24 text-center">
-          <div
-            className="w-16 h-16 flex items-center justify-center mx-auto mb-6"
-            style={{ backgroundColor: "#f5f5f7", borderRadius: 9999 }}
-          >
-            <Package className="w-8 h-8 text-[#7a7a7a]" />
-          </div>
-          <h1
-            className="text-[#1d1d1f] mb-3"
-            style={{
-              fontFamily: '"SF Pro Display", system-ui, -apple-system, sans-serif',
-              fontSize: 34,
-              fontWeight: 600,
-              letterSpacing: "-0.374px",
-            }}
-          >
-            App not found
-          </h1>
-          <p className="text-[#7a7a7a] mb-8" style={{ fontSize: 17 }}>
-            The app you&apos;re looking for doesn&apos;t exist or has been removed.
-          </p>
-          <Link
-            href="/apps"
-            className="inline-flex items-center gap-2 rounded-full bg-[#0066cc] text-white hover:bg-[#0071e3] active:scale-95 transition-all"
-            style={{ fontSize: 17, padding: "11px 22px", letterSpacing: "-0.374px" }}
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Browse All Apps
-          </Link>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
+  const url = absoluteUrl(`/apps/${app.slug}`);
+  const description = truncate(
+    app.description || `${app.name} — a handcrafted Android app by Darshan Regmi. Free APK download, no Play Store required.`
+  );
+  const image = app.icon || "/og-image.png";
+
+  return {
+    title: `${app.name} — Android APK Download`,
+    description,
+    alternates: { canonical: url },
+    keywords: [
+      `${app.name} APK`,
+      `${app.name} download`,
+      `${app.name} Android app`,
+      `${app.category} app`,
+      "APK download",
+      "Darshan Regmi",
+    ].filter(Boolean),
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      url,
+      title: `${app.name} — Android APK Download`,
+      description,
+      siteName: "Veon",
+      images: [{ url: image, alt: app.name }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${app.name} — Android APK Download`,
+      description,
+      site: "@darshanregmi_np",
+      images: [image],
+    },
+  };
+}
+
+export default async function AppDetailPage({ params }: Params) {
+  const { slug } = await params;
+  const app = await getAppBySlug(slug).catch(() => null);
+
+  // Real 404 status instead of a soft "not found" 200 — lets Google drop the
+  // URL from the index instead of storing a thin page.
+  if (!app) notFound();
 
   const changelogEntries = Object.entries(app.changelog).sort(([a], [b]) =>
     b.localeCompare(a)
   );
 
+  const jsonLd = appJsonLd(app);
+
   return (
     <div style={{ backgroundColor: "#ffffff", color: "#1d1d1f" }}>
       <Navbar />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       <div className="max-w-[980px] mx-auto px-4 sm:px-6 py-10 md:py-16">
         {/* Back */}
@@ -197,7 +184,7 @@ export default function AppDetailPage() {
 
             {/* CTA */}
             <DownloadButton
-              onTrack={() => incrementDownloads(app.id)}
+              track={{ kind: "app", id: app.id }}
               downloadUrl={app.downloadUrl}
               label="Download APK"
             />
@@ -319,7 +306,7 @@ export default function AppDetailPage() {
             Free to download · No Play Store required
           </p>
           <DownloadButton
-            onTrack={() => incrementDownloads(app.id)}
+            track={{ kind: "app", id: app.id }}
             downloadUrl={app.downloadUrl}
             label="Download APK"
           />

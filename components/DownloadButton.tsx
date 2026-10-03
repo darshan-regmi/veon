@@ -5,15 +5,28 @@ import { Download, Loader2 } from "lucide-react";
 
 interface Props {
   downloadUrl: string;
-  onTrack?: () => Promise<void>;
+  /**
+   * Firestore collection + doc id to bump a `downloads` counter on click.
+   * Accepting ids instead of an `onTrack` callback keeps this usable from
+   * Server Components, which cannot pass functions across the boundary.
+   */
+  track?: { kind: "app" | "book"; id: string };
   className?: string;
   label?: string;
   variant?: "primary" | "secondary";
 }
 
+async function recordDownload(track: NonNullable<Props["track"]>) {
+  const { incrementBookDownloads, incrementDownloads } = await import(
+    "@/lib/firestore"
+  );
+  if (track.kind === "app") await incrementDownloads(track.id);
+  else await incrementBookDownloads(track.id);
+}
+
 export default function DownloadButton({
   downloadUrl,
-  onTrack,
+  track,
   className = "",
   label = "Download",
   variant = "primary",
@@ -24,7 +37,7 @@ export default function DownloadButton({
     if (!downloadUrl) return;
     setLoading(true);
     try {
-      if (onTrack) await onTrack();
+      if (track) await recordDownload(track);
     } catch {
       // don't block download if tracking fails
     } finally {

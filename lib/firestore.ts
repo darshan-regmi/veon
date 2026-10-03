@@ -13,39 +13,8 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "./firebase";
+import { docToApp, docToBook } from "./mappers";
 import type { App, AppInput, Book, BookInput } from "./types";
-
-function docToApp(id: string, data: Record<string, unknown>): App {
-  return {
-    id,
-    name: (data.name as string) ?? "",
-    slug: (data.slug as string) ?? id,
-    description: (data.description as string) ?? "",
-    icon: (data.icon as string) ?? "",
-    features: (data.features as string[]) ?? [],
-    version: (data.version as string) ?? "1.0.0",
-    releaseDate: (data.releaseDate as string) ?? "",
-    // support legacy "apkUrl" field
-    downloadUrl:
-      (data.downloadUrl as string) ?? (data.apkUrl as string) ?? "",
-    screenshots: (data.screenshots as string[]) ?? [],
-    category: (data.category as string) ?? "",
-    downloads: (data.downloads as number) ?? 0,
-    changelog: (data.changelog as Record<string, string>) ?? {},
-    featured: (data.featured as boolean) ?? false,
-    developer: data.developer as string | undefined,
-    rating: data.rating as number | undefined,
-    price: data.price as number | undefined,
-    isFree: data.isFree as boolean | undefined,
-    githubRepo: data.githubRepo as string | undefined,
-    createdAt:
-      (data.createdAt as { toDate?: () => Date } | null)?.toDate?.() ??
-      new Date(),
-    updatedAt:
-      (data.updatedAt as { toDate?: () => Date } | null)?.toDate?.() ??
-      new Date(),
-  };
-}
 
 export async function getAllApps(): Promise<App[]> {
   const snap = await getDocs(
@@ -110,32 +79,6 @@ export async function deleteApp(id: string): Promise<void> {
 }
 
 // ─── Books ────────────────────────────────────────────────────────────────────
-
-function docToBook(id: string, data: Record<string, unknown>): Book {
-  return {
-    id,
-    title: (data.title as string) ?? "",
-    slug: (data.slug as string) ?? id,
-    author: (data.author as string) ?? "",
-    description: (data.description as string) ?? "",
-    cover: (data.cover as string) ?? "",
-    pdfUrl: (data.pdfUrl as string) ?? "",
-    genre: (data.genre as string) ?? "",
-    language: (data.language as string) ?? "English",
-    publishedDate: (data.publishedDate as string) ?? "",
-    pages: data.pages as number | undefined,
-    excerpt: data.excerpt as string | undefined,
-    tags: (data.tags as string[]) ?? [],
-    featured: (data.featured as boolean) ?? false,
-    downloads: (data.downloads as number) ?? 0,
-    createdAt:
-      (data.createdAt as { toDate?: () => Date } | null)?.toDate?.() ??
-      new Date(),
-    updatedAt:
-      (data.updatedAt as { toDate?: () => Date } | null)?.toDate?.() ??
-      new Date(),
-  };
-}
 
 export async function getAllBooks(): Promise<Book[]> {
   const snap = await getDocs(
