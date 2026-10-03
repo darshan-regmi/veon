@@ -138,13 +138,13 @@ export default function RootLayout({
     "@graph": [
       {
         "@type": "WebSite",
-        "@id": "https://veon.darshanregmi.com.np/#website",
-        url: "https://veon.darshanregmi.com.np",
+        "@id": `${SITE_URL}/#website`,
+        url: `${SITE_URL}`,
         name: "Veon",
         description:
           "Premium Android apps and eBooks crafted with passion by Darshan Regmi",
         publisher: {
-          "@id": "https://veon.darshanregmi.com.np/#organization",
+          "@id": `${SITE_URL}/#organization`,
         },
         inLanguage: "en-US",
         potentialAction: {
@@ -152,27 +152,27 @@ export default function RootLayout({
           target: {
             "@type": "EntryPoint",
             urlTemplate:
-              "https://veon.darshanregmi.com.np/apps?search={search_term_string}",
+              `${SITE_URL}/apps?search={search_term_string}`,
           },
           "query-input": "required name=search_term_string",
         },
       },
       {
         "@type": "Organization",
-        "@id": "https://veon.darshanregmi.com.np/#organization",
+        "@id": `${SITE_URL}/#organization`,
         name: "Veon",
-        url: "https://veon.darshanregmi.com.np",
+        url: `${SITE_URL}`,
         logo: {
           "@type": "ImageObject",
-          "@id": "https://veon.darshanregmi.com.np/#logo",
-          url: "https://veon.darshanregmi.com.np/logo.png",
-          contentUrl: "https://veon.darshanregmi.com.np/logo.png",
+          "@id": `${SITE_URL}/#logo`,
+          url: `${SITE_URL}/logo.png`,
+          contentUrl: `${SITE_URL}/logo.png`,
           width: 512,
           height: 512,
           caption: "Veon Logo",
         },
         image: {
-          "@id": "https://veon.darshanregmi.com.np/#logo",
+          "@id": `${SITE_URL}/#logo`,
         },
         founder: {
           "@id": "https://darshanregmi.com.np/#person",
@@ -193,10 +193,10 @@ export default function RootLayout({
         "@id": "https://darshanregmi.com.np/#person",
         name: "Darshan Regmi",
         url: "https://darshanregmi.com.np",
-        image: "https://veon.darshanregmi.com.np/logo.png",
+        image: `${SITE_URL}/logo.png`,
         jobTitle: "Software Developer & Author",
         worksFor: {
-          "@id": "https://veon.darshanregmi.com.np/#organization",
+          "@id": `${SITE_URL}/#organization`,
         },
         address: {
           "@type": "PostalAddress",
@@ -215,22 +215,22 @@ export default function RootLayout({
       },
       {
         "@type": "WebPage",
-        "@id": "https://veon.darshanregmi.com.np/#webpage",
-        url: "https://veon.darshanregmi.com.np",
+        "@id": `${SITE_URL}/#webpage`,
+        url: `${SITE_URL}`,
         name: "Veon - Download Premium Android Apps & eBooks",
         isPartOf: {
-          "@id": "https://veon.darshanregmi.com.np/#website",
+          "@id": `${SITE_URL}/#website`,
         },
         about: {
-          "@id": "https://veon.darshanregmi.com.np/#organization",
+          "@id": `${SITE_URL}/#organization`,
         },
         primaryImageOfPage: {
-          "@id": "https://veon.darshanregmi.com.np/#primaryimage",
+          "@id": `${SITE_URL}/#primaryimage`,
         },
         image: {
-          "@id": "https://veon.darshanregmi.com.np/#primaryimage",
+          "@id": `${SITE_URL}/#primaryimage`,
         },
-        thumbnailUrl: "https://veon.darshanregmi.com.np/og-image.png",
+        thumbnailUrl: `${SITE_URL}/og-image.png`,
         datePublished: "2024-01-01T00:00:00+00:00",
         dateModified: new Date().toISOString(),
         description:
@@ -239,29 +239,29 @@ export default function RootLayout({
         potentialAction: [
           {
             "@type": "ReadAction",
-            target: ["https://veon.darshanregmi.com.np"],
+            target: [`${SITE_URL}`],
           },
         ],
       },
       {
         "@type": "ImageObject",
-        "@id": "https://veon.darshanregmi.com.np/#primaryimage",
+        "@id": `${SITE_URL}/#primaryimage`,
         inLanguage: "en-US",
-        url: "https://veon.darshanregmi.com.np/og-image.png",
-        contentUrl: "https://veon.darshanregmi.com.np/og-image.png",
+        url: `${SITE_URL}/og-image.png`,
+        contentUrl: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
         caption: "Veon - Premium Android Apps and eBooks",
       },
       {
         "@type": "BreadcrumbList",
-        "@id": "https://veon.darshanregmi.com.np/#breadcrumb",
+        "@id": `${SITE_URL}/#breadcrumb`,
         itemListElement: [
           {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://veon.darshanregmi.com.np",
+            item: `${SITE_URL}`,
           },
         ],
       },
