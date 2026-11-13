@@ -176,7 +176,7 @@ export default function RootLayout({
           "@id": "https://darshanregmi.com.np/#person",
         },
         sameAs: [
-          "https://github.com/darshanregmi",
+          "https://github.com/darshan-regmi",
         ],
         contactPoint: {
           "@type": "ContactPoint",

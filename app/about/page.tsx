@@ -137,7 +137,6 @@ export default function AboutPage() {
               style={{ borderTop: "1px solid #e0e0e0" }}
             >
               {[
-                { label: "Instagram — @bydarshanregmi", href: "https://instagram.com/bydarshanregmi" },
                 { label: "Instagram — @_darshan_regmi", href: "https://instagram.com/_darshan_regmi" },
                 { label: "GitHub — @darshan-regmi", href: "https://github.com/darshan-regmi" },
                 { label: "Email me", href: "mailto:darshanregmi.official@gmail.com" },

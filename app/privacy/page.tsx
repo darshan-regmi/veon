@@ -160,10 +160,10 @@ export default function PrivacyPolicyPage() {
           >
             Questions about this Privacy Policy? Contact us at{" "}
             <a
-              href="mailto:regmidarshan545@gmail.com"
+              href="mailto:darshanregmi.official@gmail.com"
               className="text-[#0066cc] hover:text-[#0071e3] transition-colors"
             >
-              regmidarshan545@gmail.com
+              darshanregmi.official@gmail.com
             </a>
           </p>
         </div>
