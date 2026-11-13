@@ -24,7 +24,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "About Darshan Regmi | Veon",
     description: "The developer and poet behind Veon.",
-    site: "@darshanregmi_np",
     images: [`${SITE_URL}/og-image.png`],
   },
 };

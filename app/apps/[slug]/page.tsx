@@ -67,7 +67,6 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       card: "summary_large_image",
       title: `${app.name} — Android APK Download`,
       description,
-      site: "@darshanregmi_np",
       images: [image],
     },
   };

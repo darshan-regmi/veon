@@ -61,8 +61,6 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    site: "@darshanregmi_np",
-    creator: "@darshanregmi_np",
     title: "Veon - Download Premium Android Apps & eBooks",
     description:
       "Download premium Android APKs and eBooks by Darshan Regmi. Handcrafted productivity apps from Nepal.",
@@ -178,7 +176,6 @@ export default function RootLayout({
           "@id": "https://darshanregmi.com.np/#person",
         },
         sameAs: [
-          "https://twitter.com/darshanregmi_np",
           "https://github.com/darshanregmi",
         ],
         contactPoint: {
@@ -204,7 +201,6 @@ export default function RootLayout({
           addressRegion: "Province 4",
           addressCountry: "NP",
         },
-        sameAs: ["https://twitter.com/darshanregmi_np"],
         knowsAbout: [
           "Android Development",
           "Mobile Applications",

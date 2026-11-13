@@ -36,7 +36,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Android Apps — Free APK Downloads",
     description: DESCRIPTION,
-    site: "@darshanregmi_np",
     images: ["/og-image.png"],
   },
 };

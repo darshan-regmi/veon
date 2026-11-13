@@ -21,7 +21,6 @@ export const metadata: Metadata = {
     card: "summary",
     title: "Privacy Policy | Veon",
     description: "How Veon handles your personal information.",
-    site: "@darshanregmi_np",
   },
 };
 

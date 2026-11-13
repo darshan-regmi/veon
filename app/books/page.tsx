@@ -37,7 +37,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Free PDF Ebooks",
     description: DESCRIPTION,
-    site: "@darshanregmi_np",
     images: ["/og-image.png"],
   },
 };

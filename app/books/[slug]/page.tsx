@@ -68,7 +68,6 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       card: "summary_large_image",
       title: `${book.title} — Free PDF Download`,
       description,
-      site: "@darshanregmi_np",
       images: [image],
     },
   };

@@ -23,7 +23,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Contact | Veon",
     description: "Get in touch about Veon apps and eBooks.",
-    site: "@darshanregmi_np",
     images: [`${SITE_URL}/og-image.png`],
   },
 };

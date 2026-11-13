@@ -101,15 +101,6 @@ export default function Footer() {
               Email
             </a>
             <a
-              href="https://x.com/darshanregmi_np"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#7a7a7a] hover:text-[#0066cc] transition-colors"
-              style={{ fontSize: 12, letterSpacing: "-0.12px" }}
-            >
-              X (Twitter)
-            </a>
-            <a
               href="https://github.com/darshan-regmi"
               target="_blank"
               rel="noopener noreferrer"

@@ -4,7 +4,6 @@ export const SITE_URL = (
 
 export const SITE_NAME = "Veon";
 export const AUTHOR_NAME = "Darshan Regmi";
-export const TWITTER_HANDLE = "@darshanregmi_np";
 
 /** Builds an absolute URL for canonical/OG tags. */
 export function absoluteUrl(path: string): string {
